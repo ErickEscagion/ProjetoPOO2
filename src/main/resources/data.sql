@@ -1,0 +1,2 @@
+INSERT INTO TB_EVENT(name, description, place, email_Contact,start_Date_Time,end_Date_Time) VALUES ('Evento do Erick','Descricao do Evento do Erick', 'Local do Evento do Erick','email@contato.com', '2021-03-10 22:00:50', '2021-03-11 17:35:10');
+INSERT INTO TB_EVENT(name, description, place, email_Contact,start_Date_Time,end_Date_Time) VALUES ('Event from Erick','Description from Event', 'Event place','email@contact.com', '2021-03-11 18:55:30', '2021-03-11 22:03:12');
