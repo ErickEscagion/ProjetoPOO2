@@ -8,6 +8,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import org.hibernate.validator.constraints.Length;
 
 @Entity
 @Table(name = "TB_EVENT")
@@ -19,16 +25,26 @@ public class Event implements Serializable{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Id;
 
+    @NotBlank(message = "The name of the event is mandatory!")
     private String name;
 
+    @NotBlank(message = "The event description is mandatory!")
+    @Length(max=200, message = "The event description must have a maximum of 200 characters")
     private String description;
 
+    @NotBlank(message = "The location of the event is mandatory!")
     private String place;
 
+    @NotBlank(message = "Mandatory start dateTime!")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime startDateTime;
 
+    @NotBlank(message = "Mandatory start dateTime!")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime endDateTime;
 
+    @NotBlank(message = "Email is mandatory!")
+    @Email
     private String emailContact;
     
     public Event(){
