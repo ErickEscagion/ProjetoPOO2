@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import project.poo2.dto.EventDTO;
 import project.poo2.dto.EventInsertDTO;
+import project.poo2.dto.EventUpdateDTO;
 import project.poo2.entities.Event;
 import project.poo2.repositories.EventRepository;
 
@@ -65,5 +67,18 @@ public class EventService {
             entity = eventRepository.save(entity);
             return new EventDTO(entity);
         }
+    }
+
+
+    public EventDTO update(Long id,@Valid EventUpdateDTO dto){
+        try{
+          Event entity = eventRepository.getOne(id);
+          entity.setName(dto.getName());
+          entity = eventRepository.save(entity);
+          return new EventDTO(entity);
+        }
+        catch(EntityNotFoundException ex){
+          throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found");
+        }   
     }
 }
