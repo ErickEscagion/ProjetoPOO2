@@ -9,12 +9,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 import org.hibernate.validator.constraints.Length;
 
-import project.poo2.entities.Event;
-
-public class EventDTO {
-
-    private Long id;   
-    
+public class EventInsertDTO {
     @NotBlank(message = "The name of the event is mandatory!")
     private String name;
 
@@ -35,15 +30,6 @@ public class EventDTO {
     @Email
     private String emailContact;
 
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-    
     public String getName() {
         return name;
     }
@@ -92,37 +78,4 @@ public class EventDTO {
         this.emailContact = emailContact;
     }
 
-    public EventDTO(){
-        
-    }
-
-
-    public EventDTO(Event event){
-        this.id = event.getId();
-        this.name = event.getName();
-        this.description = event.getDescription();
-        this.place = event.getPlace();
-        this.startDateTime = event.getStartDateTime();
-        this.endDateTime = event.getEndDateTime();
-        this.emailContact = event.getEmailContact();
-    }
-
-    public EventDTO(Long id, @NotBlank(message = "The name of the event is mandatory!") String name,
-            @NotBlank(message = "The event description is mandatory!") @Length(max = 200, message = "The event description must have a maximum of 200 characters") String description,
-            @NotBlank(message = "The location of the event is mandatory!") String place,
-            LocalDateTime startDateTime,
-            LocalDateTime endDateTime,
-            @NotBlank(message = "Email is mandatory!") @Email String emailContact) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.place = place;
-        this.startDateTime = startDateTime;
-        this.endDateTime = endDateTime;
-        this.emailContact = emailContact;
-    }
-
-    
-    
-    
 }

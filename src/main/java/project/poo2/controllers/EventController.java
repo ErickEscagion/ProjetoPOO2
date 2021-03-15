@@ -1,16 +1,23 @@
 package project.poo2.controllers;
 
+import java.net.URI;
 import java.util.List;
+
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import project.poo2.dto.EventDTO;
+import project.poo2.dto.EventInsertDTO;
 import project.poo2.services.EventService;
 
 @RestController
@@ -38,6 +45,12 @@ public class EventController {
 		return ResponseEntity.noContent().build();
 	}
 
+    @PostMapping
+	public ResponseEntity<EventDTO> insert(@Valid @RequestBody EventInsertDTO insertDto){
+		EventDTO dto = eventService.insert(insertDto); 
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(dto.getId()).toUri();
+		return ResponseEntity.created(uri).body(dto);
+	}
 
 
 }

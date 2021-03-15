@@ -15,6 +15,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 import org.hibernate.validator.constraints.Length;
 
+import project.poo2.dto.EventInsertDTO;
+
 @Entity
 @Table(name = "TB_EVENT")
 public class Event implements Serializable{
@@ -35,11 +37,9 @@ public class Event implements Serializable{
     @NotBlank(message = "The location of the event is mandatory!")
     private String place;
 
-    @NotBlank(message = "Mandatory start dateTime!")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime startDateTime;
 
-    @NotBlank(message = "Mandatory start dateTime!")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime endDateTime;
 
@@ -135,5 +135,14 @@ public class Event implements Serializable{
             return false;
         return true;
     }
+
+    public Event(EventInsertDTO dto) {
+        this.name = dto.getName();
+        this.description = dto.getDescription();
+        this.place = dto.getPlace();
+        this.startDateTime = dto.getStartDateTime();
+        this.endDateTime = dto.getEndDateTime();
+        this.emailContact = dto.getEmailContact();
+	}
 
 }
