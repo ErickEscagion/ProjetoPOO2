@@ -9,6 +9,8 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -25,9 +27,9 @@ public class EventService {
     @Autowired
     private EventRepository eventRepository;
 
-    public List<EventDTO> getEvent(){
-        List<Event> list = eventRepository.findAll();
-        return toDTOList(list);
+    public Page<EventDTO> getEvent(PageRequest pageRequest){
+        Page<Event> list = eventRepository.findAll(pageRequest);
+        return list.map(e -> new EventDTO(e));
     }
 
     public List<EventDTO> toDTOList(List<Event> list) {
