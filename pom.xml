@@ -58,6 +58,12 @@
 			<version>5.4.29.Final</version>
 		</dependency>
 
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+
 </dependencies>
 
 	<build>
