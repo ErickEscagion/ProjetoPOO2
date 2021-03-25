@@ -10,6 +10,11 @@ import project.poo2.entities.Event;
 
 @Repository
 public interface EventRepository extends JpaRepository <Event,Long>{
-    @Query("SELECT e FROM Event e ")
-    public Page <Event> findAll(Pageable pageRequest);
+    @Query("SELECT e FROM Event e " +
+    "WHERE" +
+    "(LOWER(e.name) LIKE  LOWER(CONCAT('%', :eventName,'%'))) AND " +
+    "(LOWER(e.description) LIKE  LOWER(CONCAT('%', :eventDescription,'%'))) AND " +
+    "(LOWER(e.place) LIKE  LOWER(CONCAT('%', :eventPlace,'%')))"
+    )
+    public Page <Event> findAll(Pageable pageRequest, String eventName, String eventDescription, String eventPlace);
 }
