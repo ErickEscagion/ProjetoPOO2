@@ -1,6 +1,7 @@
 package project.poo2.controllers;
 
 import java.net.URI;
+import java.time.LocalDateTime;
 
 import javax.validation.Valid;
 
@@ -40,11 +41,11 @@ public class EventController {
         @RequestParam(value = "orderBy", defaultValue = "id") String orderBy,
         @RequestParam(value = "name", defaultValue = "") String eventName,
         @RequestParam(value = "description", defaultValue = "") String eventDescription,
-        @RequestParam(value = "place", defaultValue = "") String eventPlace
+        @RequestParam(value = "place", defaultValue = "") String eventPlace,
+        @RequestParam(value = "startDateTime", defaultValue = "2012-12-12 12:12:12") String eventStartDateTime
     ){
         PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction),orderBy);
-
-        Page<EventDTO> list = eventService.getEvent(pageRequest, eventName, eventDescription, eventPlace);
+        Page<EventDTO> list = eventService.getEvent(pageRequest, eventName, eventDescription, eventPlace, eventStartDateTime);
         return ResponseEntity.ok(list);
     }
 

@@ -1,6 +1,9 @@
 package project.poo2.services;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Formatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,9 +30,17 @@ public class EventService {
     @Autowired
     private EventRepository eventRepository;
 
-    public Page<EventDTO> getEvent(PageRequest pageRequest, String eventName, String eventDescription, String eventPlace){
-        Page<Event> list = eventRepository.findAll(pageRequest, eventName, eventDescription, eventPlace);
-        return list.map(e -> new EventDTO(e));
+    
+    public Page<EventDTO> getEvent(PageRequest pageRequest, String eventName, String eventDescription, String eventPlace, String eventStartDateTime_st){
+        try{
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            LocalDateTime eventStartDateTime = LocalDateTime.parse(eventStartDateTime_st, formatter);
+            Page<Event> list = eventRepository.findAll(pageRequest, eventName, eventDescription, eventPlace, eventStartDateTime);
+            return list.map(e -> new EventDTO(e));
+        }
+        catch(Exception e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "incorrect date use the format yyyy-MM-dd HH:mm:ss");
+        }
     }
 
     public List<EventDTO> toDTOList(List<Event> list) {

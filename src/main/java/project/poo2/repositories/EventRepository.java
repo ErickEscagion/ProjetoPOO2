@@ -1,5 +1,7 @@
 package project.poo2.repositories;
 
+import java.time.LocalDateTime;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,7 +16,8 @@ public interface EventRepository extends JpaRepository <Event,Long>{
     "WHERE" +
     "(LOWER(e.name) LIKE  LOWER(CONCAT('%', :eventName,'%'))) AND " +
     "(LOWER(e.description) LIKE  LOWER(CONCAT('%', :eventDescription,'%'))) AND " +
-    "(LOWER(e.place) LIKE  LOWER(CONCAT('%', :eventPlace,'%')))"
+    "(LOWER(e.place) LIKE  LOWER(CONCAT('%', :eventPlace,'%'))) AND " +
+    "e.startDateTime > :eventStartDateTime"
     )
-    public Page <Event> findAll(Pageable pageRequest, String eventName, String eventDescription, String eventPlace);
+    public Page <Event> findAll(Pageable pageRequest, String eventName, String eventDescription, String eventPlace, LocalDateTime eventStartDateTime);
 }
