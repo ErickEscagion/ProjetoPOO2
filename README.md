@@ -1,3 +1,11 @@
+<h1>Projeto de Programação Orienteda a Objetos 2</h1>
+
+Projeto desenvolvido para o aperfeiçoamento do conhecimento na disciplina de Programação Orienteda a Objetos 2.
+
+<h2>Link do heroku</h2>
+https://projetofinalpoo2.herokuapp.com
+<h4>OBS: usar o /events apos o link como rota padrão</h4>
+
 <h1> Requisitos AC1 </h1>
 Desenvolva uma aplicação Web Rest API com Spring Boot para Cadastrar  Eventos:
 A entidade EVENT possui:
@@ -29,3 +37,8 @@ Construir um CRUD Rest para gerenciar eventos seguindo o modelo apresentado até
 <li>Arquitetura em Camadas Usando DTOs - 1 ponto.</li>
 <li>Git Hub PRIVADO: 1 Ponto - Fazer pelo menos um commit para cada tarefa acima. </li>
 </ul>
+
+<h1> Requisitos AC2 </h1>
+
+<h1> Requisitos AF </h1>
+
