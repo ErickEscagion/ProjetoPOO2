@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -46,6 +48,11 @@ public class Event implements Serializable{
     @NotBlank(message = "Email is mandatory!")
     @Email
     private String emailContact;
+
+    @ManyToOne
+    @JoinColumn(name="ADMIN_USER_ID")
+    private Admin admin;
+    
     
     public Event(){
 
@@ -109,6 +116,15 @@ public class Event implements Serializable{
 
     public void setEmailContact(String emailContact) {
         this.emailContact = emailContact;
+    }
+
+
+    public Admin getAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(Admin admin) {
+        this.admin = admin;
     }
 
     @Override
