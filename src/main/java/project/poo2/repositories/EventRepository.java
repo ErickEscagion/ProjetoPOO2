@@ -14,9 +14,9 @@ import project.poo2.entities.Event;
 public interface EventRepository extends JpaRepository <Event,Long>{
     @Query("SELECT e FROM Event e " +
     "WHERE" +
-    "(LOWER(e.name) LIKE  LOWER(CONCAT('%', :eventName,'%'))) AND " +
-    "(LOWER(e.description) LIKE  LOWER(CONCAT('%', :eventDescription,'%'))) AND " +
-    "(LOWER(e.place) LIKE  LOWER(CONCAT('%', :eventPlace,'%'))) AND " +
+    "(LOWER(e.name)         LIKE  LOWER(CONCAT('%', :eventName,'%'))) AND " +
+    "(LOWER(e.description)  LIKE  LOWER(CONCAT('%', :eventDescription,'%'))) AND " +
+    "(LOWER(e.place)        LIKE  LOWER(CONCAT('%', :eventPlace,'%'))) AND " +
     "e.startDateTime > :eventStartDateTime"
     )
     public Page <Event> findAll(Pageable pageRequest, String eventName, String eventDescription, String eventPlace, LocalDateTime eventStartDateTime);

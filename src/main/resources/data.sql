@@ -2,7 +2,8 @@ INSERT INTO TB_EVENT(name, description, place, email_Contact,start_Date_Time,end
 INSERT INTO TB_EVENT(name, description, place, email_Contact,start_Date_Time,end_Date_Time) VALUES ('Event from Erick','Description from Event', 'Event place','email@contact.com', '2021-03-11 18:55:30', '2021-03-11 22:03:12');
 INSERT INTO TB_EVENT(name, description, place, email_Contact,start_Date_Time,end_Date_Time) VALUES ('Evento da Laura','Descricao do Evento da Laura', 'Local do Evento da Laura','Laura@contato.com', '2021-03-25 16:00:00', '2021-03-25 22:30:10');
 INSERT INTO TB_EVENT(name, description, place, email_Contact,start_Date_Time,end_Date_Time) VALUES ('Event from Laura','Description from Event Laura', 'Event place from Laura','Laura@contact.com', '2021-03-25 16:00:00', '2021-03-25 22:30:10');
-INSERT INTO TB_EVENT(name, description, place, email_Contact,start_Date_Time,end_Date_Time) VALUES ('Evento do Erick2','Descricao do Evento do Erick2', 'Local do Evento do Erick2','email2@contato.com', '2021-03-10 22:00:50', '2021-03-11 17:35:10');
-INSERT INTO TB_EVENT(name, description, place, email_Contact,start_Date_Time,end_Date_Time) VALUES ('Event from Erick2','Description from Event2', 'Event place2','email2@contact.com', '2021-03-11 18:55:30', '2021-03-11 22:03:12');
-INSERT INTO TB_EVENT(name, description, place, email_Contact,start_Date_Time,end_Date_Time) VALUES ('Evento da Laura2','Descricao do Evento da Laura2', 'Local do Evento da Laura2','Laura2@contato.com', '2021-03-25 16:00:00', '2021-03-25 22:30:10');
-INSERT INTO TB_EVENT(name, description, place, email_Contact,start_Date_Time,end_Date_Time) VALUES ('Event from Laura2','Description from Event Laura2', 'Event place from Laura2','Laura2@contact.com', '2021-03-25 16:00:00', '2021-03-25 22:30:10');
+
+
+INSERT INTO TB_BASEUSER(name, email) VALUES('erick', 'erick@gmail.com');
+
+INSERT INTO TB_ADMIN(user_id, phone_number) VALUES (1,'15998181242');

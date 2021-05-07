@@ -54,4 +54,8 @@ public class Admin extends BaseUser{
         this.events.add(event);
     }
 
+    public Admin(Admin admin){
+        this.phoneNumber = admin.getName();
+    }
+
 }
