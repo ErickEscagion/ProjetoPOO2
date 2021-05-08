@@ -77,7 +77,7 @@ public class EventService {
         if(dto.getEndDate().compareTo(dto.getStartDate()) < 0
             || (dto.getEndDate().compareTo(dto.getStartDate()) == 0
                 && dto.getEndTime().compareTo(dto.getStartTime()) <= 0)){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "the end date is smaller or the same as the start date");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "the end date is smaller or the same as the start date");
         }else{
             Event entity = new Event(dto);
             entity = eventRepository.save(entity);
@@ -95,6 +95,6 @@ public class EventService {
         }
         catch(EntityNotFoundException ex){
           throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found");
-        }   
+        }
     }
 }
