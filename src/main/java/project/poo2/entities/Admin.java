@@ -55,7 +55,7 @@ public class Admin extends BaseUser {
     }
 
     public Admin(Admin admin){
-        this.phoneNumber = admin.getName();
+        this.phoneNumber = admin.getPhoneNumber();
     }
 
 }
