@@ -16,7 +16,6 @@ import javax.validation.constraints.NotBlank;
 @Entity
 @Table(name="TB_BASEUSER")
 @Inheritance(strategy = InheritanceType.JOINED)
-
 public class BaseUser implements Serializable {
         
     @Id

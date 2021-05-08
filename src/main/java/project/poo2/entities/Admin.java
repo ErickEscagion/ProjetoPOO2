@@ -13,7 +13,7 @@ import javax.validation.constraints.NotBlank;
 @Entity
 @Table(name="TB_ADMIN")
 @PrimaryKeyJoinColumn(name="USER_ID")
-public class Admin extends BaseUser{
+public class Admin extends BaseUser {
     
     @NotBlank(message = "The phone Number is mandatory!")
     private String phoneNumber;
