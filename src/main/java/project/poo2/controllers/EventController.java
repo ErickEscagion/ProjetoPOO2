@@ -41,10 +41,10 @@ public class EventController {
         @RequestParam(value = "name", defaultValue = "") String eventName,
         @RequestParam(value = "description", defaultValue = "") String eventDescription,
         @RequestParam(value = "place", defaultValue = "") String eventPlace,
-        @RequestParam(value = "startDateTime", defaultValue = "2012-12-12 12:12:12") String eventStartDateTime
-    ){
+        @RequestParam(value = "startDate", defaultValue = "2012-12-12") String eventStartDate
+    ) {
         PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction),orderBy);
-        Page<EventDTO> list = eventService.getEvent(pageRequest, eventName, eventDescription, eventPlace, eventStartDateTime);
+        Page<EventDTO> list = eventService.getEvent(pageRequest, eventName, eventDescription, eventPlace, eventStartDate);
         return ResponseEntity.ok(list);
     }
 
