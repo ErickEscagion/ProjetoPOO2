@@ -9,7 +9,6 @@ import org.springframework.stereotype.Repository;
 import project.poo2.entities.Admin;
 
 @Repository
-
 public interface AdminRepository extends JpaRepository <Admin,Long>{
     @Query("SELECT a FROM Admin a " +
     "WHERE" +
