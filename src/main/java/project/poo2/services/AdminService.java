@@ -2,6 +2,9 @@ package project.poo2.services;
 
 import java.util.Optional;
 
+import javax.persistence.EntityNotFoundException;
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
@@ -45,4 +48,24 @@ public class AdminService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Administrator not found");
         }
     }
+
+    public AdminDTO insert(@Valid AdminDTO dto){
+        Admin entity = new Admin(dto);
+        entity = adminRepository.save(entity);
+        return new AdminDTO(entity);
+    }
+
+    public AdminDTO update(Long id,@Valid AdminDTO dto){
+        try{
+            Admin entity = adminRepository.getOne(id);
+            entity.setPhoneNumber(dto.getPhoneNumber());
+            entity.setEmail(dto.getEmail());
+            entity = adminRepository.save(entity);
+            return new AdminDTO(entity);
+        }
+        catch(EntityNotFoundException ex){
+          throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Admin not found");
+        }   
+    }
+
 }

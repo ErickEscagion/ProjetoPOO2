@@ -9,6 +9,9 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+
+import project.poo2.dto.AdminDTO;
 
 @Entity
 @Table(name="TB_ADMIN")
@@ -16,6 +19,7 @@ import javax.validation.constraints.NotBlank;
 public class Admin extends BaseUser{
     
     @NotBlank(message = "The phone Number is mandatory!")
+    @Pattern(regexp="(^$|[0-9]{11})")
     private String phoneNumber;
 
 
@@ -27,13 +31,13 @@ public class Admin extends BaseUser{
 
     }
 
-    public Admin(@NotBlank(message = "The phone Number is mandatory!") String phoneNumber) {
+    public Admin(@NotBlank(message = "The phone Number is mandatory!") @Pattern(regexp="(^$|[0-9]{11})") String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 
-    public Admin(Long id, @NotBlank(message = "The name of the event is mandatory!") String name,
+    public Admin(Long id, @NotBlank(message = "The name of the Admin is mandatory!") String name,
             @NotBlank(message = "Email is mandatory!") @Email String email,
-            @NotBlank(message = "The phone Number is mandatory!") String phoneNumber) {
+            @NotBlank(message = "The phone Number is mandatory!") @Pattern(regexp="(^$|[0-9]{11})")String phoneNumber) {
         super(id, name, email);
         this.phoneNumber = phoneNumber;
     }
@@ -58,4 +62,10 @@ public class Admin extends BaseUser{
         this.phoneNumber = admin.getName();
     }
 
+    public Admin(AdminDTO dto) {
+        this.setId(dto.getId());
+        this.setName(dto.getName());
+        this.setEmail(dto.getEmail());
+        this.phoneNumber = dto.getPhoneNumber();
+	}
 }
