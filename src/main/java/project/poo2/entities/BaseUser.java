@@ -16,14 +16,13 @@ import javax.validation.constraints.NotBlank;
 @Entity
 @Table(name="TB_BASEUSER")
 @Inheritance(strategy = InheritanceType.JOINED)
-
 public class BaseUser implements Serializable {
         
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @NotBlank(message = "The name of the event is mandatory!")
+    @NotBlank(message = "The user name is mandatory!")
     private String name;
 
     @NotBlank(message = "Email is mandatory!")
@@ -34,9 +33,14 @@ public class BaseUser implements Serializable {
 
     }
 
+    public BaseUser(String name, @Email String email) {
+        this.name = name;
+        this.email = email;
+    }
+
     public BaseUser(
         Long id, 
-        @NotBlank(message = "The name of the event is mandatory!") String name,
+        @NotBlank(message = "The user name is mandatory!") String name,
         @NotBlank(message = "Email is mandatory!") @Email String email) {
         this.id = id;
         this.name = name;

@@ -16,7 +16,7 @@ import project.poo2.dto.AdminDTO;
 @Entity
 @Table(name="TB_ADMIN")
 @PrimaryKeyJoinColumn(name="USER_ID")
-public class Admin extends BaseUser{
+public class Admin extends BaseUser {
     
     @NotBlank(message = "The phone Number is mandatory!")
     @Pattern(regexp="(^$|[0-9]{11})")
@@ -59,7 +59,7 @@ public class Admin extends BaseUser{
     }
 
     public Admin(Admin admin){
-        this.phoneNumber = admin.getName();
+        this.phoneNumber = admin.getPhoneNumber();
     }
 
     public Admin(AdminDTO dto) {

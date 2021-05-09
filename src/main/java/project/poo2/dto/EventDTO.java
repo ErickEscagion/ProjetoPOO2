@@ -1,6 +1,7 @@
 package project.poo2.dto;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -25,11 +26,17 @@ public class EventDTO {
     @NotBlank(message = "The location of the event is mandatory!")
     private String place;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime startDateTime;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate startDate;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime endDateTime;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate endDate;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
+    private LocalTime startTime;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
+    private LocalTime endTime;
 
     @NotBlank(message = "Email is mandatory!")
     @Email
@@ -68,20 +75,36 @@ public class EventDTO {
         this.place = place;
     }
 
-    public LocalDateTime getStartDateTime() {
-        return startDateTime;
+    public LocalDate getStartDate() {
+        return startDate;
     }
 
-    public void setStartDateTime(LocalDateTime startDateTime) {
-        this.startDateTime = startDateTime;
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
     }
 
-    public LocalDateTime getEndDateTime() {
-        return endDateTime;
+    public LocalDate getEndDate() {
+        return endDate;
     }
 
-    public void setEndDateTime(LocalDateTime endDateTime) {
-        this.endDateTime = endDateTime;
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
+    }
+
+    public LocalTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalTime getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(LocalTime endTime) {
+        this.endTime = endTime;
     }
 
     public String getEmailContact() {
@@ -102,23 +125,29 @@ public class EventDTO {
         this.name = event.getName();
         this.description = event.getDescription();
         this.place = event.getPlace();
-        this.startDateTime = event.getStartDateTime();
-        this.endDateTime = event.getEndDateTime();
+        this.startDate = event.getStartDate();
+        this.endDate = event.getEndDate();
+        this.startTime = event.getStartTime();
+        this.endTime = event.getEndTime();
         this.emailContact = event.getEmailContact();
     }
 
     public EventDTO(Long id, @NotBlank(message = "The name of the event is mandatory!") String name,
             @NotBlank(message = "The event description is mandatory!") @Length(max = 200, message = "The event description must have a maximum of 200 characters") String description,
             @NotBlank(message = "The location of the event is mandatory!") String place,
-            LocalDateTime startDateTime,
-            LocalDateTime endDateTime,
+            LocalDate startDate,
+            LocalDate endDate,
+            LocalTime startTime,
+            LocalTime endTime,
             @NotBlank(message = "Email is mandatory!") @Email String emailContact) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.place = place;
-        this.startDateTime = startDateTime;
-        this.endDateTime = endDateTime;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.startTime = startTime;
+        this.endTime = endTime;
         this.emailContact = emailContact;
     }
 

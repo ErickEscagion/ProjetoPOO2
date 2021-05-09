@@ -1,6 +1,6 @@
 package project.poo2.services;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,15 +30,15 @@ public class EventService {
     private EventRepository eventRepository;
 
     
-    public Page<EventDTO> getEvent(PageRequest pageRequest, String eventName, String eventDescription, String eventPlace, String eventStartDateTime_st){
-        try{
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-            LocalDateTime eventStartDateTime = LocalDateTime.parse(eventStartDateTime_st, formatter);
-            Page<Event> list = eventRepository.findAll(pageRequest, eventName, eventDescription, eventPlace, eventStartDateTime);
+    public Page<EventDTO> getEvent(PageRequest pageRequest, String eventName, String eventDescription, String eventPlace, String eventStartDate_st){
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            LocalDate eventStartDate = LocalDate.parse(eventStartDate_st, formatter);
+            Page<Event> list = eventRepository.findAll(pageRequest, eventName, eventDescription, eventPlace, eventStartDate);
             return list.map(e -> new EventDTO(e));
         }
-        catch(Exception e){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "incorrect date use the format yyyy-MM-dd HH:mm:ss");
+        catch(Exception e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "incorrect date use the format yyyy-MM-dd");
         }
     }
 
@@ -47,7 +47,9 @@ public class EventService {
         List<EventDTO> listDTO = new ArrayList<>();
 
         for (Event e : list) {
-            EventDTO dto = new EventDTO(e.getId(),e.getName(),e.getDescription(),e.getPlace(),e.getStartDateTime(),e.getEndDateTime(),e.getEmailContact());
+            EventDTO dto = new EventDTO(e.getId(), e.getName(), e.getDescription(),
+                                        e.getPlace(), e.getStartDate(), e.getEndDate(),
+                                        e.getStartTime(), e.getEndTime(), e.getEmailContact());
             listDTO.add(dto);
         }
 
@@ -72,8 +74,10 @@ public class EventService {
 
     public EventDTO insert(@Valid EventInsertDTO dto){
 
-        if(dto.getEndDateTime().compareTo(dto.getStartDateTime()) <= 0){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "the end date is smaller or the same as the start date");
+        if(dto.getEndDate().compareTo(dto.getStartDate()) < 0
+            || (dto.getEndDate().compareTo(dto.getStartDate()) == 0
+                && dto.getEndTime().compareTo(dto.getStartTime()) <= 0)){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "the end date is smaller or the same as the start date");
         }else{
             Event entity = new Event(dto);
             entity = eventRepository.save(entity);
@@ -91,6 +95,6 @@ public class EventService {
         }
         catch(EntityNotFoundException ex){
           throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found");
-        }   
+        }
     }
 }
