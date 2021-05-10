@@ -9,3 +9,5 @@ INSERT INTO TB_BASEUSER(name, email) VALUES('Michell', 'michell@gmail.com');
 INSERT INTO TB_ADMIN(user_id, phone_number) VALUES (1, '15998181242');
 
 INSERT INTO TB_ATTEND(user_id, balance) VALUES (2, 4000);
+
+INSERT INTO TB_PLACE(name,address) VALUES ('nome','lugar')
