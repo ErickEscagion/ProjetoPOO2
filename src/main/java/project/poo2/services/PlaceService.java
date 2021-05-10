@@ -2,6 +2,7 @@ package project.poo2.services;
 
 import java.util.Optional;
 
+import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,5 +52,18 @@ public class PlaceService {
         Place entity = new Place(place);
         entity = placeRepository.save(entity);
         return new Place(entity);
+    }
+
+    public Place update(Long id,@Valid Place place){
+        try{
+            Place entity = placeRepository.getOne(id);
+            entity.setName(place.getName());
+            entity.setAddress(place.getAddress());
+            entity = placeRepository.save(entity);
+            return new Place(entity);
+        }
+        catch(EntityNotFoundException ex){
+          throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Place not found");
+        }   
     }
 }
