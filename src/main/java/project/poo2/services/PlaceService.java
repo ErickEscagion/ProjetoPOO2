@@ -1,5 +1,7 @@
 package project.poo2.services;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,5 +26,12 @@ public class PlaceService {
         catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "");
         }
+    }
+
+    public Place getPlaceById(Long id) {
+        Optional<Place> op = placeRepository.findById(id);
+        Place place = op.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Place not found"));
+
+        return new Place(place);
     }
 }
