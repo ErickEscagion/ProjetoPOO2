@@ -2,6 +2,8 @@ package project.poo2.services;
 
 import java.util.Optional;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
@@ -41,6 +43,20 @@ public class AttendService {
         Attend entity = new Attend(attendDTO);
         entity = attendRepository.save(entity);
         return new AttendDTO(entity);
+    }
+
+    public AttendDTO update(Long id, AttendDTO dto){
+        try{
+            Attend entity = attendRepository.getOne(id);
+            entity.setBalance(dto.getBalance());
+            // entity.setEmail(dto.getEmail());
+            System.out.println(entity);
+            entity = attendRepository.save(entity);
+            return new AttendDTO(entity);
+        }
+        catch(EntityNotFoundException ex){
+          throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Admin not found");
+        }   
     }
 
     public void delete(Long id){
