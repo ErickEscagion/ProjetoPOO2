@@ -2,6 +2,8 @@ package project.poo2.services;
 
 import java.util.Optional;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
@@ -43,5 +45,11 @@ public class PlaceService {
         catch(EmptyResultDataAccessException e){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Place not found");
         }
+    }
+
+    public Place insert(@Valid Place place){
+        Place entity = new Place(place);
+        entity = placeRepository.save(entity);
+        return new Place(entity);
     }
 }
