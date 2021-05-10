@@ -3,6 +3,7 @@ package project.poo2.services;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -33,5 +34,14 @@ public class PlaceService {
         Place place = op.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Place not found"));
 
         return new Place(place);
+    }
+
+    public void delete(Long id){
+        try{
+            placeRepository.deleteById(id);
+        }
+        catch(EmptyResultDataAccessException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Place not found");
+        }
     }
 }
