@@ -42,7 +42,7 @@ public class Place implements Serializable{
         
     }
 
-    public Place(Long id, @NotBlank(message = "The user name is mandatory!") String name,
+    public Place(Long id, @NotBlank(message = "The name is mandatory!") String name,
             @NotBlank(message = "The address is mandatory!") String address) {
         this.id = id;
         this.name = name;
