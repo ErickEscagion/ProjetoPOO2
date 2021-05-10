@@ -17,9 +17,11 @@ import project.poo2.dto.AdminDTO;
 @Table(name="TB_ADMIN")
 @PrimaryKeyJoinColumn(name="USER_ID")
 public class Admin extends BaseUser {
+
+    private final String phonePattern = "^?(?:[14689][1-9]|2[12478]|3[1234578]|5[1345]|7[134579])? ?(?:[2-8]|9[1-9])[0-9]{3}-?[0-9]{4}$";
     
-    @NotBlank(message = "The phone Number is mandatory!")
-    @Pattern(regexp="(^$|[0-9]{11})")
+    @NotBlank(message = "The phone number is mandatory!")
+    @Pattern(regexp=phonePattern)
     private String phoneNumber;
 
 
@@ -31,13 +33,13 @@ public class Admin extends BaseUser {
 
     }
 
-    public Admin(@NotBlank(message = "The phone Number is mandatory!") @Pattern(regexp="(^$|[0-9]{11})") String phoneNumber) {
+    public Admin(@NotBlank(message = "The phone number is mandatory!") @Pattern(regexp=phonePattern) String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 
     public Admin(Long id, @NotBlank(message = "The name of the Admin is mandatory!") String name,
             @NotBlank(message = "Email is mandatory!") @Email String email,
-            @NotBlank(message = "The phone Number is mandatory!") @Pattern(regexp="(^$|[0-9]{11})")String phoneNumber) {
+            @NotBlank(message = "The phone number is mandatory!") @Pattern(regexp=phonePattern)String phoneNumber) {
         super(id, name, email);
         this.phoneNumber = phoneNumber;
     }
