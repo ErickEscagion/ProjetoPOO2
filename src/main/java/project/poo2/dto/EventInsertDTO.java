@@ -5,6 +5,7 @@ import java.time.LocalTime;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -18,24 +19,37 @@ public class EventInsertDTO {
     @Length(max=200, message = "The event description must have a maximum of 200 characters")
     private String description;
 
-    @NotBlank(message = "The location of the event is mandatory!")
-    private String place;
-
+    @NotNull(message = "The event start date is mandatory!")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate startDate;
-
+    
+    @NotNull(message = "The event end date is mandatory!")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate endDate;
-
+    
+    @NotNull(message = "The event start time is mandatory!")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
     private LocalTime startTime;
-
+    
+    @NotNull(message = "The event end time is mandatory!")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
     private LocalTime endTime;
 
     @NotBlank(message = "Email is mandatory!")
     @Email
     private String emailContact;
+
+    @NotNull(message = "The amount of free tickets is mandatory!")
+    private Integer amountFreeTickets;
+
+    @NotNull(message = "The amount of paid tickets is mandatory!")
+    private Integer amountPaidTickets;
+
+    @NotNull(message = "The ticket price is mandatory!")
+    private Double priceTicket;
+
+    @NotNull(message = "The admin id is mandatory!")
+    private Long adminId;
 
     public String getName() {
         return name;
@@ -51,14 +65,6 @@ public class EventInsertDTO {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public String getPlace() {
-        return place;
-    }
-
-    public void setPlace(String place) {
-        this.place = place;
     }
 
     public LocalDate getStartDate() {
@@ -101,4 +107,35 @@ public class EventInsertDTO {
         this.emailContact = emailContact;
     }
 
+    public int getAmountFreeTickets() {
+        return amountFreeTickets;
+    }
+
+    public void setAmountFreeTickets(int amountFreeTickets) {
+        this.amountFreeTickets = amountFreeTickets;
+    }
+
+    public int getAmountPaidTickets() {
+        return amountPaidTickets;
+    }
+
+    public void setAmountPaidTickets(int amountPaidTickets) {
+        this.amountPaidTickets = amountPaidTickets;
+    }
+
+    public double getPriceTicket() {
+        return priceTicket;
+    }
+
+    public void setPriceTicket(double priceTicket) {
+        this.priceTicket = priceTicket;
+    }
+
+    public long getAdminId() {
+        return adminId;
+    }
+
+    public void setAdminId(long adminId) {
+        this.adminId = adminId;
+    }
 }
