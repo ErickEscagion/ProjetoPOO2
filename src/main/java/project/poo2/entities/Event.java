@@ -3,16 +3,20 @@ package project.poo2.entities;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -37,18 +41,19 @@ public class Event implements Serializable{
     @Length(max=200, message = "The event description must have a maximum of 200 characters")
     private String description;
 
-    @NotBlank(message = "The location of the event is mandatory!")
-    private String place;
-
+    @NotNull(message = "The event start date is mandatory!")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate startDate;
 
+    @NotNull(message = "The event end date is mandatory!")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate endDate;
 
+    @NotNull(message = "The event start time is mandatory!")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
     private LocalTime startTime;
 
+    @NotNull(message = "The event end time is mandatory!")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
     private LocalTime endTime;
 
@@ -56,14 +61,50 @@ public class Event implements Serializable{
     @Email
     private String emailContact;
 
+    // @JsonIgnoreProperties("admin")
     @ManyToOne
     @JoinColumn(name="ADMIN_USER_ID")
     private Admin admin;
+
+    @NotNull(message = "The amount of free tickets is mandatory!")
+    private int amountFreeTickets;
+
+    @NotNull(message = "The amount of paid tickets is mandatory!")
+    private int amountPaidTickets;
+
+    @NotNull(message = "The selled amount of free tickets is mandatory!")
+    private int freeTicketsSelled;
+
+    @NotNull(message = "The selled amount of paid tickets is mandatory!")
+    private int paidTicketsSelled;
+
+    @NotNull(message = "The ticket price is mandatory!")
+    private double priceTicket;
     
+    @ManyToMany
+    @JoinTable(
+        name="TB_PLACE_EVENT",
+        joinColumns =  @JoinColumn(name="EVENT_ID"),
+        inverseJoinColumns = @JoinColumn(name="PLACE_ID")
+    )
+    private List<Place> places;
     
-    public Event(){
+    public Event() {
 
     }
+
+    public Event(EventInsertDTO dto) {
+        this.name = dto.getName();
+        this.description = dto.getDescription();
+        this.startDate = dto.getStartDate();
+        this.endDate = dto.getEndDate();
+        this.startTime = dto.getStartTime();
+        this.endTime = dto.getEndTime();
+        this.emailContact = dto.getEmailContact();
+        this.amountFreeTickets = dto.getAmountFreeTickets();
+        this.amountPaidTickets = dto.getAmountPaidTickets();
+        this.priceTicket = dto.getPriceTicket();
+	}
 
     public static long getSerialversionuid() {
         return serialVersionUID;
@@ -93,12 +134,16 @@ public class Event implements Serializable{
         this.description = description;
     }
 
-    public String getPlace() {
-        return place;
+    public List<Place> getPlaces() {
+        return places;
     }
 
-    public void setPlace(String place) {
-        this.place = place;
+    public void addPlace(Place place) {
+        this.places.add(place);
+    }
+
+    public void removePlace(Place place) {
+        this.places.remove(place);
     }
 
     public LocalDate getStartDate() {
@@ -141,6 +186,45 @@ public class Event implements Serializable{
         this.emailContact = emailContact;
     }
 
+    public int getAmountFreeTickets() {
+        return amountFreeTickets;
+    }
+
+    public void setAmountFreeTickets(int amountFreeTickets) {
+        this.amountFreeTickets = amountFreeTickets;
+    }
+
+    public int getAmountPaidTickets() {
+        return amountPaidTickets;
+    }
+
+    public void setAmountPaidTickets(int amountPaidTickets) {
+        this.amountPaidTickets = amountPaidTickets;
+    }
+
+    public int getFreeTicketsSelled() {
+        return freeTicketsSelled;
+    }
+
+    public void setFreeTicketsSelled(int freeTicketsSelled) {
+        this.freeTicketsSelled = freeTicketsSelled;
+    }
+
+    public int getPaidTicketsSelled() {
+        return paidTicketsSelled;
+    }
+
+    public void setPaidTicketsSelled(int paidTicketsSelled) {
+        this.paidTicketsSelled = paidTicketsSelled;
+    }
+
+    public double getPriceTicket() {
+        return priceTicket;
+    }
+
+    public void setPriceTicket(double priceTicket) {
+        this.priceTicket = priceTicket;
+    }
 
     public Admin getAdmin() {
         return admin;
@@ -174,16 +258,4 @@ public class Event implements Serializable{
             return false;
         return true;
     }
-
-    public Event(EventInsertDTO dto) {
-        this.name = dto.getName();
-        this.description = dto.getDescription();
-        this.place = dto.getPlace();
-        this.startDate = dto.getStartDate();
-        this.endDate = dto.getEndDate();
-        this.startTime = dto.getStartTime();
-        this.endTime = dto.getEndTime();
-        this.emailContact = dto.getEmailContact();
-	}
-
 }
