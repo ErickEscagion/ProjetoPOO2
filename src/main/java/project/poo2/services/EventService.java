@@ -20,7 +20,9 @@ import org.springframework.web.server.ResponseStatusException;
 import project.poo2.dto.EventDTO;
 import project.poo2.dto.EventInsertDTO;
 import project.poo2.dto.EventUpdateDTO;
+import project.poo2.entities.Admin;
 import project.poo2.entities.Event;
+import project.poo2.repositories.AdminRepository;
 import project.poo2.repositories.EventRepository;
 
 @Service
@@ -29,6 +31,8 @@ public class EventService {
     @Autowired
     private EventRepository eventRepository;
 
+    @Autowired
+    private AdminRepository adminRepository;
     
     public Page<EventDTO> getEvent(PageRequest pageRequest, String eventName, String eventDescription, String eventPlace, String eventStartDate_st){
         try {
@@ -43,13 +47,12 @@ public class EventService {
     }
 
     public List<EventDTO> toDTOList(List<Event> list) {
-
         List<EventDTO> listDTO = new ArrayList<>();
 
         for (Event e : list) {
             EventDTO dto = new EventDTO(e.getId(), e.getName(), e.getDescription(),
-                                        e.getPlace(), e.getStartDate(), e.getEndDate(),
-                                        e.getStartTime(), e.getEndTime(), e.getEmailContact());
+                                        e.getStartDate(), e.getEndDate(), e.getStartTime(),
+                                        e.getEndTime(), e.getEmailContact());
             listDTO.add(dto);
         }
 
@@ -73,28 +76,46 @@ public class EventService {
     }
 
     public EventDTO insert(@Valid EventInsertDTO dto){
+        Optional<Admin> op = adminRepository.findById(dto.getAdminId());
+        Admin admin = op.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Admin not found"));
 
         if(dto.getEndDate().compareTo(dto.getStartDate()) < 0
             || (dto.getEndDate().compareTo(dto.getStartDate()) == 0
-                && dto.getEndTime().compareTo(dto.getStartTime()) <= 0)){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "the end date is smaller or the same as the start date");
-        }else{
+                && dto.getEndTime().compareTo(dto.getStartTime()) <= 0)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The end date is smaller or the same as the start date");
+        } else {
             Event entity = new Event(dto);
+            entity.setAdmin(admin);
+            entity.setFreeTicketsSelled(0);
+            entity.setPaidTicketsSelled(0);
             entity = eventRepository.save(entity);
             return new EventDTO(entity);
         }
     }
 
 
-    public EventDTO update(Long id,@Valid EventUpdateDTO dto){
-        try{
-          Event entity = eventRepository.getOne(id);
-          entity.setName(dto.getName());
-          entity = eventRepository.save(entity);
-          return new EventDTO(entity);
+    public EventDTO update(Long id, @Valid EventUpdateDTO dto){
+        try {
+            Event entity = eventRepository.getOne(id);
+
+            if(dto.getEndDate().compareTo(dto.getStartDate()) < 0
+                || (dto.getEndDate().compareTo(dto.getStartDate()) == 0
+                    && dto.getEndTime().compareTo(dto.getStartTime()) <= 0)) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The end date is smaller or the same as the start date");
+            } else {
+                entity.setName(dto.getName());
+                entity.setDescription(dto.getDescription());
+                entity.setEmailContact(dto.getEmailContact());
+                entity.setStartDate(dto.getStartDate());
+                entity.setEndDate(dto.getEndDate());
+                entity.setStartTime(dto.getStartTime());
+                entity.setEndTime(dto.getEndTime());
+                entity = eventRepository.save(entity);
+                return new EventDTO(entity);
+            }
         }
-        catch(EntityNotFoundException ex){
-          throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found");
+        catch(EntityNotFoundException ex) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found");
         }
     }
 }
