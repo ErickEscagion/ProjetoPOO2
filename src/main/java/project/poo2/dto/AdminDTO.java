@@ -17,7 +17,6 @@ public class AdminDTO extends BaseUser{
     @Pattern(regexp=phonePattern)
     private String phoneNumber;
 
-
     public AdminDTO(){
 
     }
@@ -33,14 +32,6 @@ public class AdminDTO extends BaseUser{
         this.phoneNumber = phoneNumber;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
     public AdminDTO(Admin admin){
         this.setId(admin.getId());
         this.setName(admin.getName());
@@ -48,4 +39,11 @@ public class AdminDTO extends BaseUser{
         this.phoneNumber = admin.getPhoneNumber();
     }  
 
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
 }
