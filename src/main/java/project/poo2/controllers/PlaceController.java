@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import project.poo2.dto.PlaceDTO;
 import project.poo2.entities.Place;
 import project.poo2.services.PlaceService;
 
@@ -32,7 +33,7 @@ public class PlaceController {
     private PlaceService placeService;
 
     @GetMapping
-    public ResponseEntity<Page<Place>> getPlace(
+    public ResponseEntity<Page<PlaceDTO>> getPlace(
         @RequestParam(value = "page", defaultValue = "0") Integer page,
         @RequestParam(value = "linesPerPage", defaultValue = "5") Integer linesPerPage,
         @RequestParam(value = "direction", defaultValue = "ASC") String direction,
@@ -41,13 +42,13 @@ public class PlaceController {
         @RequestParam(value = "address", defaultValue = "") String placeAddress
     ) {
         PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction),orderBy);
-        Page<Place> list = placeService.getPlace(pageRequest, placeName, placeAddress);
+        Page<PlaceDTO> list = placeService.getPlace(pageRequest, placeName, placeAddress);
         return ResponseEntity.ok(list);
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Place> getPlaceById(@PathVariable Long id) {
-        Place place = placeService.getPlaceById(id);
+    public ResponseEntity<PlaceDTO> getPlaceById(@PathVariable Long id) {
+        PlaceDTO place = placeService.getPlaceById(id);
         return ResponseEntity.ok(place);
     }
 
@@ -58,15 +59,15 @@ public class PlaceController {
 	}
     
     @PostMapping
-	public ResponseEntity<Place> insert(@Valid @RequestBody Place placeInsert){
-		Place place = placeService.insert(placeInsert); 
+	public ResponseEntity<PlaceDTO> insert(@Valid @RequestBody Place placeInsert){
+		PlaceDTO place = placeService.insert(placeInsert); 
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(place.getId()).toUri();
 		return ResponseEntity.created(uri).body(place);
 	}
 
     @PutMapping("{id}")
-	public ResponseEntity<Place> update(@Valid @PathVariable Long id, @RequestBody Place updatePlace){
-		Place place = placeService.update(id, updatePlace); 
+	public ResponseEntity<PlaceDTO> update(@Valid @PathVariable Long id, @RequestBody Place updatePlace){
+		PlaceDTO place = placeService.update(id, updatePlace);
 		return ResponseEntity.ok().body(place);
 	}
 }
