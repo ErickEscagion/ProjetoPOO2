@@ -61,14 +61,14 @@ public class EventController {
 	}
 
     @PostMapping
-	public ResponseEntity<EventDTO> insert(@Valid @RequestBody EventInsertDTO insertDto){
+	public ResponseEntity<EventDTO> insert(@Valid @RequestBody EventInsertDTO insertDto) {
 		EventDTO dto = eventService.insert(insertDto); 
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(dto.getId()).toUri();
 		return ResponseEntity.created(uri).body(dto);
 	}
 
     @PutMapping("{id}")
-	public ResponseEntity<EventDTO> update(@Valid @PathVariable Long id, @RequestBody EventUpdateDTO updateDto){
+	public ResponseEntity<EventDTO> update(@Valid @PathVariable Long id, @Valid @RequestBody EventUpdateDTO updateDto){
 		EventDTO dto = eventService.update(id, updateDto); 
 		return ResponseEntity.ok().body(dto);
 	}
