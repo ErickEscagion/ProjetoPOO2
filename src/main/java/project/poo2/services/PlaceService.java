@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import project.poo2.dto.PlaceDTO;
 import project.poo2.entities.Place;
 import project.poo2.repositories.PlaceRepository;
 
@@ -22,21 +23,21 @@ public class PlaceService {
     private PlaceRepository placeRepository;
 
     
-    public Page<Place> getPlace(PageRequest pageRequest, String placeName, String placeAddress){
+    public Page<PlaceDTO> getPlace(PageRequest pageRequest, String placeName, String placeAddress){
         try {
             Page<Place> list = placeRepository.findAll(pageRequest, placeName, placeAddress);
-            return list.map(p -> new Place(p));
+            return list.map(p -> new PlaceDTO(p));
         }
         catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "");
         }
     }
 
-    public Place getPlaceById(Long id) {
+    public PlaceDTO getPlaceById(Long id) {
         Optional<Place> op = placeRepository.findById(id);
         Place place = op.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Place not found"));
 
-        return new Place(place);
+        return new PlaceDTO(place);
     }
 
     public void delete(Long id){
@@ -48,19 +49,19 @@ public class PlaceService {
         }
     }
 
-    public Place insert(@Valid Place place){
+    public PlaceDTO insert(@Valid Place place){
         Place entity = new Place(place);
         entity = placeRepository.save(entity);
-        return new Place(entity);
+        return new PlaceDTO(entity);
     }
 
-    public Place update(Long id,@Valid Place place){
+    public PlaceDTO update(Long id,@Valid Place place){
         try{
             Place entity = placeRepository.getOne(id);
             entity.setName(place.getName());
             entity.setAddress(place.getAddress());
             entity = placeRepository.save(entity);
-            return new Place(entity);
+            return new PlaceDTO(entity);
         }
         catch(EntityNotFoundException ex){
           throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Place not found");
