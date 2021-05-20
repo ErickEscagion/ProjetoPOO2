@@ -1,6 +1,5 @@
 package project.poo2.entities;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -21,12 +20,11 @@ public class Attend extends BaseUser {
     @NotNull(message = "The balance is mandatory!")
     private double balance;
 
+    @OneToMany(mappedBy = "attend")
+    private List<Ticket> tickets;
 
-    @OneToMany(mappedBy = "admin")
-    private List<Event> events = new ArrayList<>();
 
-
-    public Attend(){
+    public Attend() {
 
     }
 
@@ -54,11 +52,15 @@ public class Attend extends BaseUser {
         this.balance = balance;
     }
 
-    public List<Event> getEvents() {
-        return events;
+    public List<Ticket> getTickets() {
+        return tickets;
     }
 
-    public void addEvent(Event event) {
-        this.events.add(event);
+    public void addTicket(Ticket ticket) {
+        this.tickets.add(ticket);
+    }
+
+    public void removeTicket(Ticket ticket) {
+        this.tickets.remove(ticket);
     }
 }
