@@ -13,3 +13,5 @@ INSERT INTO TB_EVENT(name, description, email_Contact,start_Date,end_Date,start_
 INSERT INTO TB_EVENT(name, description, email_Contact,start_Date,end_Date,start_Time,end_Time,amount_free_tickets,amount_paid_tickets,free_tickets_selled,paid_tickets_selled,price_ticket,admin_user_id) VALUES ('Event from Laura','Description from Event Laura', 'Laura@contact.com', '2021-03-25', '2021-03-25', '16:00:00', '22:30:10', 50, 250, 0, 0, 50, 1);
 
 INSERT INTO TB_PLACE_EVENT(place_id, event_id) VALUES (1, 3);
+
+INSERT INTO TB_TICKET(type, date, price, attend_user_id, event_id) VALUES (0, CURRENT_TIMESTAMP, 50, 2, 3);
