@@ -13,6 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -88,6 +89,9 @@ public class Event implements Serializable{
         inverseJoinColumns = @JoinColumn(name="PLACE_ID")
     )
     private List<Place> places;
+
+    @OneToMany(mappedBy = "event")
+    private List<Ticket> tickets;
     
     public Event() {
 
@@ -144,6 +148,18 @@ public class Event implements Serializable{
 
     public void removePlace(Place place) {
         this.places.remove(place);
+    }
+
+    public List<Ticket> getTickets() {
+        return tickets;
+    }
+
+    public void addTicket(Ticket ticket) {
+        this.tickets.add(ticket);
+    }
+
+    public void removeTicket(Ticket ticket) {
+        this.tickets.remove(ticket);
     }
 
     public LocalDate getStartDate() {
