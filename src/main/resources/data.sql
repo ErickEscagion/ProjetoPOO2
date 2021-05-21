@@ -34,7 +34,7 @@ INSERT INTO TB_PLACE_EVENT(place_id, event_id) VALUES (2, 2);
 INSERT INTO TB_PLACE_EVENT(place_id, event_id) VALUES (3, 3);
 INSERT INTO TB_PLACE_EVENT(place_id, event_id) VALUES (4, 1);
 
-INSERT INTO TB_TICKET(type, date, price, attend_user_id, event_id) VALUES (0, CURRENT_TIMESTAMP, 0, 1, 3);
-INSERT INTO TB_TICKET(type, date, price, attend_user_id, event_id) VALUES (0, CURRENT_TIMESTAMP, 0, 1, 3);
-INSERT INTO TB_TICKET(type, date, price, attend_user_id, event_id) VALUES (1, CURRENT_TIMESTAMP, 50, 2, 3);
-INSERT INTO TB_TICKET(type, date, price, attend_user_id, event_id) VALUES (1, CURRENT_TIMESTAMP, 100, 3, 3);
+INSERT INTO TB_TICKET(type, date, price, attend_user_id, event_id) VALUES (0, CURRENT_TIMESTAMP, 0, 5, 3);
+INSERT INTO TB_TICKET(type, date, price, attend_user_id, event_id) VALUES (0, CURRENT_TIMESTAMP, 0, 5, 3);
+INSERT INTO TB_TICKET(type, date, price, attend_user_id, event_id) VALUES (1, CURRENT_TIMESTAMP, 50, 6, 3);
+INSERT INTO TB_TICKET(type, date, price, attend_user_id, event_id) VALUES (1, CURRENT_TIMESTAMP, 100, 7, 3);
