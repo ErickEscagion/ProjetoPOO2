@@ -1,6 +1,7 @@
 package project.poo2.services;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,8 +23,10 @@ import project.poo2.dto.EventInsertDTO;
 import project.poo2.dto.EventUpdateDTO;
 import project.poo2.entities.Admin;
 import project.poo2.entities.Event;
+import project.poo2.entities.Place;
 import project.poo2.repositories.AdminRepository;
 import project.poo2.repositories.EventRepository;
+import project.poo2.repositories.PlaceRepository;
 
 @Service
 public class EventService {
@@ -33,6 +36,12 @@ public class EventService {
 
     @Autowired
     private AdminRepository adminRepository;
+
+    @Autowired
+    private PlaceRepository placeRepository;
+
+    @Autowired
+    private PlaceService placeService;
     
     public Page<EventDTO> getEvent(PageRequest pageRequest, String eventName, String eventDescription, String eventPlace, String eventStartDate_st){
         try {
@@ -67,10 +76,16 @@ public class EventService {
     }
 
     public void delete(Long id){
-        try{
+        try {
+            Event entity = eventRepository.getOne(id);
+
+            if (entity.getFreeTicketsSelled() > 0 || entity.getPaidTicketsSelled() > 0) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This event already sold tickets");
+            }
+
             eventRepository.deleteById(id);
         }
-        catch(EmptyResultDataAccessException e){
+        catch(EmptyResultDataAccessException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found");
         }
     }
@@ -79,13 +94,22 @@ public class EventService {
         Optional<Admin> op = adminRepository.findById(dto.getAdminId());
         Admin admin = op.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Admin not found"));
 
+        Optional<Place> opPlace = placeRepository.findById(dto.getPlaceId());
+        Place place = opPlace.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Place not found"));
+
         if(dto.getEndDate().compareTo(dto.getStartDate()) < 0
             || (dto.getEndDate().compareTo(dto.getStartDate()) == 0
                 && dto.getEndTime().compareTo(dto.getStartTime()) <= 0)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The end date is smaller or the same as the start date");
         } else {
             Event entity = new Event(dto);
+
+            if (!placeService.isAvailable(place, entity)) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The place is not available at this time");
+            }
+
             entity.setAdmin(admin);
+            entity.addPlace(place);
             entity.setFreeTicketsSelled(0);
             entity.setPaidTicketsSelled(0);
             entity = eventRepository.save(entity);
@@ -94,11 +118,17 @@ public class EventService {
     }
 
 
-    public EventDTO update(Long id, @Valid EventUpdateDTO dto){
+    public EventDTO update(Long id, @Valid EventUpdateDTO dto) {
         try {
             Event entity = eventRepository.getOne(id);
 
-            if(dto.getEndDate().compareTo(dto.getStartDate()) < 0
+            LocalDate nowDate = LocalDate.now();
+            LocalTime nowTime = LocalTime.now();
+
+            if (entity.getEndDate().compareTo(nowDate) < 0
+                || (entity.getEndDate().compareTo(nowDate) == 0 && entity.getEndTime().compareTo(nowTime) <= 0)) {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This event is already finished");
+            } else if(dto.getEndDate().compareTo(dto.getStartDate()) < 0
                 || (dto.getEndDate().compareTo(dto.getStartDate()) == 0
                     && dto.getEndTime().compareTo(dto.getStartTime()) <= 0)) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The end date is smaller or the same as the start date");
