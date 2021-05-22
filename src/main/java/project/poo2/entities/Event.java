@@ -3,6 +3,7 @@ package project.poo2.entities;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -88,7 +89,7 @@ public class Event implements Serializable{
         joinColumns =  @JoinColumn(name="EVENT_ID"),
         inverseJoinColumns = @JoinColumn(name="PLACE_ID")
     )
-    private List<Place> places;
+    private List<Place> places = new ArrayList<>();
 
     @OneToMany(mappedBy = "event")
     private List<Ticket> tickets;
