@@ -38,11 +38,11 @@ public class AttendController {
         @RequestParam(value = "orderBy", defaultValue = "id") String orderBy,
         @RequestParam(value = "name", defaultValue = "") String attendName,
         @RequestParam(value = "email", defaultValue = "") String attendEmail,
-        @RequestParam(value = "balance", defaultValue = "0") String attendBalance
+        @RequestParam(value = "balance", defaultValue = "0") Double attendBalance
     ){
         
         PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction),orderBy);
-        Page<AttendDTO> list = attendService.getAttend(pageRequest, attendName, attendEmail, Double.parseDouble(attendBalance));
+        Page<AttendDTO> list = attendService.getAttend(pageRequest, attendName, attendEmail, attendBalance);
         return ResponseEntity.ok(list);
     }
 
