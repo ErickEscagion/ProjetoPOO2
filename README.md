@@ -2,43 +2,33 @@
 
 Projeto desenvolvido para o aperfeiçoamento do conhecimento na disciplina de Programação Orienteda a Objetos 2.
 
+<h2>Desenvolvido Por:</h2>
+<p>Erick Ap. Escagion RA:190776
+<p>Michell Algarra RA:190100
+
 <h2>Link do heroku</h2>
 https://projetofinalpoo2.herokuapp.com
 <h4>OBS: usar o /events apos o link como rota padrão</h4>
 
-<h1> Requisitos AC1 </h1>
-Desenvolva uma aplicação Web Rest API com Spring Boot para Cadastrar  Eventos:
-A entidade EVENT possui:
-<ul>
-<li>id</li>
-<li>name</li>
-<li>description</li>
-<li>place</li>
-<li>start date</li>
-<li>end date</li>
-<li>start time</li>
-<li>end time</li>
-<li>email contact</li>
-</ul>
-<h4>OBS: Como combinado via mensagem os atributos (start date/end date/start time/end time) serão trocados por (startDateTime/endDateTime).</h4>
+<h2>JSON Usados Para Salvar Novas Entidades.</h2>
+<p>ADMIN
+ {
+      "name": "ERICK",
+      "email": "ERICK@GMAIL.COM",
+      "phoneNumber": "15998181242"
+ }
+<p>ATTEND
+{
+    "name": "MICHELL",
+    "email": "MICHELL@GMAIL.COM",
+    "balance": "1000"
+}
+<p>PLACE
+{ 
+    "name": "NOME",
+    "address": "LUGAR"
+}
+<p>EVENT
 
-Construir um CRUD Rest para gerenciar eventos seguindo o modelo apresentado até o momento com três profiles: TEST, DEV e PROD.
-
-<h2>Pontuação por Tarefa concluída:</h2>
-<ul>
-<li>Cadastro  - 1 Ponto.</li>
-<li>Alteração -  1 Ponto.</li>
-<li>Remoção - 1 Ponto.</li>
-<li>Listagem Paginada - 1 Ponto.</li>
-<li>Pesquisa Por Id - 1 Ponto.</li>
-<li>Pesquisas Diversas Paginadas (filtros): Nome, Por Local do Evento, Data de Início e Descrição  - 2 pontos.</li>
-<li>Data de Início = Listar eventos que começam depois da data de início passada.</li>
-<li>Publicação no Heroku: 1 Ponto usando o PostgreSQL.</li>
-<li>Arquitetura em Camadas Usando DTOs - 1 ponto.</li>
-<li>Git Hub PRIVADO: 1 Ponto - Fazer pelo menos um commit para cada tarefa acima. </li>
-</ul>
-
-<h1> Requisitos AC2 </h1>
-
-<h1> Requisitos AF </h1>
-
+<h2>Modelo Conceitual</h2>
+<img src="https://user-images.githubusercontent.com/55297869/119226076-e526dc00-badd-11eb-9832-50f42054251d.png" alt="Modelo"/>
