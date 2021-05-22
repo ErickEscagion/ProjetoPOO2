@@ -51,6 +51,9 @@ public class EventInsertDTO {
     @NotNull(message = "The admin id is mandatory!")
     private Long adminId;
 
+    @NotNull(message = "The place id is mandatory!")
+    private Long placeId;
+
     public String getName() {
         return name;
     }
@@ -137,5 +140,13 @@ public class EventInsertDTO {
 
     public void setAdminId(long adminId) {
         this.adminId = adminId;
+    }
+
+    public long getPlaceId() {
+        return placeId;
+    }
+
+    public void setPlaceId(long placeId) {
+        this.placeId = placeId;
     }
 }
