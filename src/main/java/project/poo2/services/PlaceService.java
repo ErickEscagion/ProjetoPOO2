@@ -1,5 +1,8 @@
 package project.poo2.services;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.List;
 import java.util.Optional;
 
 import javax.persistence.EntityNotFoundException;
@@ -14,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import project.poo2.dto.PlaceDTO;
+import project.poo2.entities.Event;
 import project.poo2.entities.Place;
 import project.poo2.repositories.PlaceRepository;
 
@@ -42,6 +46,12 @@ public class PlaceService {
 
     public void delete(Long id){
         try{
+            Place entity = placeRepository.getOne(id);
+
+            if (entity.getEvents().size() > 0) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This place has already been used by an event");
+            }
+
             placeRepository.deleteById(id);
         }
         catch(EmptyResultDataAccessException e){
@@ -66,5 +76,50 @@ public class PlaceService {
         catch(EntityNotFoundException ex){
           throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Place not found");
         }   
+    }
+
+    public boolean isAvailable(Place place, Event event) {
+        List<Event> events = place.getEvents();
+
+        LocalDate startDate = event.getStartDate();
+        LocalDate endDate = event.getEndDate();
+        LocalTime startTime = event.getStartTime();
+        LocalTime endTime = event.getEndTime();
+
+        for (Event e : events) {
+            if(compareDate(e.getStartDate(), endDate) == 0 && compareDate(e.getEndDate(), startDate) == 0) {
+                if ((compareTime(e.getStartTime(), startTime) >= 0 && compareTime(e.getStartTime(), endTime) < 0)
+                || (compareTime(e.getEndTime(), endTime) <= 0 && compareTime(e.getEndTime(), startTime) > 0)
+                || (compareTime(e.getStartTime(), startTime) < 0 && compareTime(e.getEndTime(), endTime) > 0)) {
+                    return false;
+                }
+            } else if (compareDate(e.getStartDate(), startDate) <= 0 && compareDate(e.getEndDate(), endDate) >= 0) {
+                return false;
+            } else if (compareDate(e.getStartDate(), endDate) == 0 && compareDate(e.getEndDate(), endDate) >= 0) {
+                if (compareTime(e.getStartTime(), endTime) < 0) {
+                    return false;
+                }
+                return true;
+            } else if (compareDate(e.getEndDate(), startDate) == 0 && compareDate(e.getStartDate(), startDate) <= 0) {
+                if (compareTime(e.getEndTime(), startTime) > 0) {
+                    return false;
+                }
+                return true;
+            } else if ((compareDate(e.getStartDate(), startDate) >= 0 && compareDate(e.getStartDate(), endDate) < 0)
+                || (compareDate(e.getEndDate(), endDate) <= 0 && compareDate(e.getEndDate(), startDate) > 0)
+                || (compareDate(e.getStartDate(), startDate) < 0 && compareDate(e.getEndDate(), endDate) > 0)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private int compareDate(LocalDate first, LocalDate second) {
+        return first.compareTo(second);
+    }
+
+    private int compareTime(LocalTime first, LocalTime second) {
+        return first.compareTo(second);
     }
 }
