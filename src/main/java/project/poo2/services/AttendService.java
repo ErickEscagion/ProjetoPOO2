@@ -22,8 +22,8 @@ public class AttendService {
     @Autowired
     private AttendRepository attendRepository;
 
-    public Page<AttendDTO> getAttend(PageRequest pageRequest, String attendName, String attendEmail, double attendBalance){
-        try{
+    public Page<AttendDTO> getAttend(PageRequest pageRequest, String attendName, String attendEmail, Double attendBalance){
+        try {
             Page<Attend> list = attendRepository.findAll(pageRequest, attendName, attendEmail, attendBalance);
             return list.map(a -> new AttendDTO(a));
         }
@@ -49,8 +49,6 @@ public class AttendService {
         try{
             Attend entity = attendRepository.getOne(id);
             entity.setBalance(dto.getBalance());
-            // entity.setEmail(dto.getEmail());
-            System.out.println(entity);
             entity = attendRepository.save(entity);
             return new AttendDTO(entity);
         }
