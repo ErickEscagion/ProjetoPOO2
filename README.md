@@ -7,7 +7,7 @@ Projeto desenvolvido para o aperfeiçoamento do conhecimento na disciplina de Pr
 <p>Michell Algarra Barros | RA: 190100
 
 ## Heroku
-Link: https://projetofinalpoo2.herokuapp.com
+Link: https://poo2-events.herokuapp.com/
 
 > Usar o /events apos o link como rota padrão
 
@@ -122,7 +122,7 @@ DELETE: /events/{id}
  
 > quantidade de tickets vendidos são inicializados com o valor 0
 
-> o placeId é requerido pois o evento necessita de ao menos um lugar
+> o placeId é necessário pois o evento deve possuir ao menos um lugar
  
 ```json
 {
