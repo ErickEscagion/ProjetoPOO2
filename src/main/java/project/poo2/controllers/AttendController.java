@@ -38,7 +38,7 @@ public class AttendController {
         @RequestParam(value = "orderBy", defaultValue = "id") String orderBy,
         @RequestParam(value = "name", defaultValue = "") String attendName,
         @RequestParam(value = "email", defaultValue = "") String attendEmail,
-        @RequestParam(value = "balance", defaultValue = "0") Double attendBalance
+        @RequestParam(value = "balance", defaultValue = "") Double attendBalance
     ){
         
         PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction),orderBy);
@@ -61,7 +61,7 @@ public class AttendController {
     }
 
     @PutMapping("{id}")
-	public ResponseEntity<AttendDTO> update(@Valid @PathVariable Long id, @RequestBody AttendDTO attendDTO){
+	public ResponseEntity<AttendDTO> update(@Valid @PathVariable Long id, @Valid @RequestBody AttendDTO attendDTO){
 		AttendDTO dto = attendService.update(id, attendDTO); 
 		return ResponseEntity.ok().body(dto);
 	}
