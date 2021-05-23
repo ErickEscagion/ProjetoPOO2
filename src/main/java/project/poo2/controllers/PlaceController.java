@@ -66,7 +66,7 @@ public class PlaceController {
 	}
 
     @PutMapping("{id}")
-	public ResponseEntity<PlaceDTO> update(@Valid @PathVariable Long id, @RequestBody Place updatePlace){
+	public ResponseEntity<PlaceDTO> update(@Valid @PathVariable Long id, @Valid @RequestBody Place updatePlace){
 		PlaceDTO place = placeService.update(id, updatePlace);
 		return ResponseEntity.ok().body(place);
 	}
