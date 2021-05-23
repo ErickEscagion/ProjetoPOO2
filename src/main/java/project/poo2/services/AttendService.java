@@ -48,6 +48,8 @@ public class AttendService {
     public AttendDTO update(Long id, AttendDTO dto){
         try{
             Attend entity = attendRepository.getOne(id);
+            entity.setName(dto.getName());
+            entity.setEmail(dto.getEmail());
             entity.setBalance(dto.getBalance());
             entity = attendRepository.save(entity);
             return new AttendDTO(entity);

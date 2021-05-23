@@ -60,6 +60,7 @@ public class AdminService {
             Admin entity = adminRepository.getOne(id);
             entity.setPhoneNumber(dto.getPhoneNumber());
             entity.setEmail(dto.getEmail());
+            entity.setName(dto.getName());
             entity = adminRepository.save(entity);
             return new AdminDTO(entity);
         }
