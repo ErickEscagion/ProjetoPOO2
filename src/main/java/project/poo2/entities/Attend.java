@@ -7,6 +7,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -18,6 +19,7 @@ import project.poo2.dto.AttendDTO;
 public class Attend extends BaseUser {
     
     @NotNull(message = "The balance is mandatory!")
+    @Min(value = 0, message = "The balance must not be negative")
     private double balance;
 
     @OneToMany(mappedBy = "attend")
@@ -28,13 +30,13 @@ public class Attend extends BaseUser {
 
     }
 
-    public Attend(@NotNull(message = "The balance is mandatory!") Double balance) {
+    public Attend(@NotNull(message = "The balance is mandatory!") @Min(value = 0, message = "The balance must not be negative") Double balance) {
         this.balance = balance;
     }
 
     public Attend(Long id, @NotBlank(message = "The name of the event is mandatory!") String name,
             @NotBlank(message = "Email is mandatory!") @Email String email,
-            @NotNull(message = "The balance is mandatory!") double balance) {
+            @NotNull(message = "The balance is mandatory!") @Min(value = 0, message = "The balance must not be negative") double balance) {
         super(id, name, email);
         this.balance = balance;
     }
