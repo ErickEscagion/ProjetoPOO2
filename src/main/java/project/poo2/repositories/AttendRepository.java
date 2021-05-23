@@ -14,7 +14,7 @@ public interface AttendRepository extends JpaRepository<Attend, Long> {
     "WHERE" +
     "(LOWER(a.name)        LIKE  LOWER(CONCAT('%', :attendName,          '%'))) AND " +
     "(LOWER(a.email)       LIKE  LOWER(CONCAT('%', :attendEmail,         '%'))) AND " +
-    "(LOWER(a.balance) LIKE  LOWER(CONCAT('%', :attendBalance,   '%'))) "
+    "(:attendBalance = null OR a.balance = :attendBalance)"
     )
-    public Page<Attend> findAll(Pageable pageRequest, String attendName, String attendEmail, double attendBalance);
+    public Page<Attend> findAll(Pageable pageRequest, String attendName, String attendEmail, Double attendBalance);
 }
