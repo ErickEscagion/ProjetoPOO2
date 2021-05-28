@@ -133,6 +133,14 @@ public class EventService {
                     && dto.getEndTime().compareTo(dto.getStartTime()) <= 0)) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The end date is smaller or the same as the start date");
             } else {
+                List<Place> places = entity.getPlaces();
+
+                for (Place place : places) {
+                    if (!placeService.isAvailable(place, entity)) {
+                        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The place " + place.getName() + " is not available at this time");
+                    }
+                }
+
                 entity.setName(dto.getName());
                 entity.setDescription(dto.getDescription());
                 entity.setEmailContact(dto.getEmailContact());
