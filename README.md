@@ -140,6 +140,32 @@ DELETE: /events/{id}
   "placeId": 1
 }
 ```
+ 
+#### EVENT Tickets
+##### Rotas
+```
+GET | POST | DELETE: /events/{id}/tickets
+```
+
+##### JSON (POST and DELETE)
+
+> DELETE JSON is needed since no ticketId is present in the route/endpoint
+ 
+> 'type' must be 0 (FREE) or 1 (PAID)
+ 
+```json
+{
+  "type": 0,
+  "attendId": 1
+}
+```
+ 
+#### EVENT Places
+##### Rotas
+```
+GET: /events/{id}/places
+POST | DELETE: /events/{id}/places/{placeId}
+```
 
 ## Modelo Conceitual
 <img src="https://user-images.githubusercontent.com/55297869/119226076-e526dc00-badd-11eb-9832-50f42054251d.png" alt="Modelo"/>
