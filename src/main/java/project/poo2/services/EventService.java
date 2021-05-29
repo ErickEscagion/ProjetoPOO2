@@ -1,11 +1,13 @@
 package project.poo2.services;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
@@ -18,15 +20,25 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import project.poo2.dto.AttendDTO;
 import project.poo2.dto.EventDTO;
 import project.poo2.dto.EventInsertDTO;
 import project.poo2.dto.EventUpdateDTO;
+import project.poo2.dto.PlaceDTO;
+import project.poo2.dto.TicketDTO;
+import project.poo2.dto.EventTicketDTO;
+import project.poo2.dto.TicketInsertDTO;
 import project.poo2.entities.Admin;
+import project.poo2.entities.Attend;
 import project.poo2.entities.Event;
 import project.poo2.entities.Place;
+import project.poo2.entities.Ticket;
+import project.poo2.entities.TicketType;
 import project.poo2.repositories.AdminRepository;
+import project.poo2.repositories.AttendRepository;
 import project.poo2.repositories.EventRepository;
 import project.poo2.repositories.PlaceRepository;
+import project.poo2.repositories.TicketRepository;
 
 @Service
 public class EventService {
@@ -38,7 +50,13 @@ public class EventService {
     private AdminRepository adminRepository;
 
     @Autowired
+    private AttendRepository attendRepository;
+
+    @Autowired
     private PlaceRepository placeRepository;
+
+    @Autowired
+    private TicketRepository ticketRepository;
 
     @Autowired
     private PlaceService placeService;
@@ -59,9 +77,7 @@ public class EventService {
         List<EventDTO> listDTO = new ArrayList<>();
 
         for (Event e : list) {
-            EventDTO dto = new EventDTO(e.getId(), e.getName(), e.getDescription(),
-                                        e.getStartDate(), e.getEndDate(), e.getStartTime(),
-                                        e.getEndTime(), e.getEmailContact());
+            EventDTO dto = new EventDTO(e);
             listDTO.add(dto);
         }
 
@@ -73,6 +89,197 @@ public class EventService {
         Event event = op.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"));
 
         return new EventDTO(event);
+    }
+
+    public List<EventTicketDTO> getEventTickets(Long id) {
+        Optional<Event> op = eventRepository.findById(id);
+        Event event = op.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"));
+
+        List<Ticket> tickets = event.getTickets();
+        List<EventTicketDTO> ticketDtos = new ArrayList<EventTicketDTO>();
+
+        for (Ticket ticket : tickets) {
+            EventTicketDTO dto = new EventTicketDTO(ticket, event);
+            dto.setAttendDTO(new AttendDTO(ticket.getAttend()));
+            ticketDtos.add(dto);
+        }
+
+        return ticketDtos;
+    }
+
+    public TicketDTO insertTicket(Long id, TicketInsertDTO insertDTO) {
+        Optional<Event> op = eventRepository.findById(id);
+        Event event = op.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"));
+
+        LocalDate nowDate = LocalDate.now();
+        LocalTime nowTime = LocalTime.now();
+
+        if (event.getEndDate().compareTo(nowDate) < 0
+            || (event.getEndDate().compareTo(nowDate) == 0 && event.getEndTime().compareTo(nowTime) <= 0)) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This event has already finished");
+        }
+
+        Optional<Attend> opAttend = attendRepository.findById(insertDTO.getAttendId());
+        Attend attend = opAttend.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Attend not found"));
+
+        Ticket ticket = new Ticket(insertDTO.getType(), Instant.now(), event.getPriceTicket(), attend, event);
+
+        if (ticket.getType() == TicketType.FREE && event.getAmountFreeTickets() - event.getFreeTicketsSelled() == 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This event has no more free tickets");
+        } else if (ticket.getType() == TicketType.PAID && event.getAmountPaidTickets() - event.getPaidTicketsSelled() == 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This event has no more paid tickets");
+        }
+
+        if (attend.getBalance() < ticket.getPrice()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This attend cannot afford this event ticket");
+        }
+
+        event.addTicket(ticket);
+        attend.addTicket(ticket);
+
+        eventRepository.save(event);
+        attendRepository.save(attend);
+        Ticket newTicket = ticketRepository.save(ticket);
+
+        return new TicketDTO(newTicket, new AttendDTO(attend), new EventDTO(event));
+    }
+
+    public void removeTicket(Long id, TicketInsertDTO deleteDTO) {
+        Optional<Event> op = eventRepository.findById(id);
+        Event event = op.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"));
+
+        if (event.getTickets().size() == 0) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "This event has no tickets");
+        }
+
+        LocalDate nowDate = LocalDate.now();
+        LocalTime nowTime = LocalTime.now();
+
+        if (event.getEndDate().compareTo(nowDate) < 0
+            || (event.getEndDate().compareTo(nowDate) == 0 && event.getEndTime().compareTo(nowTime) <= 0)) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This event has already finished");
+        }
+        
+        if (event.getStartDate().compareTo(nowDate) > 0
+            || (event.getStartDate().compareTo(nowDate) == 0 && event.getStartTime().compareTo(nowTime) >= 0)) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This event has already began");
+        }
+
+        Optional<Attend> opAttend = attendRepository.findById(deleteDTO.getAttendId());
+        Attend attend = opAttend.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Attend not found"));
+
+        Ticket ticket;
+
+        List<Ticket> tickets = attend.getTickets().stream().filter(t -> t.getEvent().getId() == event.getId()).collect(Collectors.toList());
+
+        if (tickets.size() == 0) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "This attend has no tickets of this event");
+        }
+
+        List<Ticket> ticketsByType = tickets.stream().filter(t -> t.getType() == deleteDTO.getType()).collect(Collectors.toList());
+        if (ticketsByType.size() > 0) {
+            ticket = ticketsByType.get(0);
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "This attend has no tickets of the type " + deleteDTO.getType());
+        }
+
+        event.removeTicket(ticket);
+        attend.removeTicket(ticket);
+
+        eventRepository.save(event);
+        attendRepository.save(attend);
+        ticketRepository.deleteById(ticket.getId());
+    }
+
+    public List<PlaceDTO> getEventPlaces(long id) {
+        Optional<Event> op = eventRepository.findById(id);
+        Event event = op.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"));
+
+        List<Place> places = event.getPlaces();
+
+        return places.stream().map(p -> new PlaceDTO(p)).collect(Collectors.toList());
+    }
+
+    public PlaceDTO insertPlace(long id, long placeId) {
+        Optional<Event> op = eventRepository.findById(id);
+        Event event = op.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"));
+
+        LocalDate nowDate = LocalDate.now();
+        LocalTime nowTime = LocalTime.now();
+
+        if (event.getEndDate().compareTo(nowDate) < 0
+            || (event.getEndDate().compareTo(nowDate) == 0 && event.getEndTime().compareTo(nowTime) <= 0)) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This event has already finished");
+        }
+        
+        if (event.getStartDate().compareTo(nowDate) > 0
+            || (event.getStartDate().compareTo(nowDate) == 0 && event.getStartTime().compareTo(nowTime) >= 0)) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This event has already began");
+        }
+
+        List<Place> eventPlaces = event.getPlaces();
+
+        if (eventPlaces.size() == 0) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "This event has no places");
+        }
+
+        eventPlaces.forEach(p -> {
+            if (p.getId() == placeId) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This event already has this place");
+            }
+        });
+
+        Optional<Place> opPlace = placeRepository.findById(placeId);
+        Place place = opPlace.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Place not found"));
+
+        if (!placeService.isAvailable(place, event)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The place is not available at this time");
+        }
+
+        event.addPlace(place);
+        eventRepository.save(event);
+
+        return new PlaceDTO(place);
+    }
+
+    public void deletePlace(long id, long placeId) {
+        Optional<Event> op = eventRepository.findById(id);
+        Event event = op.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"));
+
+        LocalDate nowDate = LocalDate.now();
+        LocalTime nowTime = LocalTime.now();
+
+        if (event.getEndDate().compareTo(nowDate) < 0
+            || (event.getEndDate().compareTo(nowDate) == 0 && event.getEndTime().compareTo(nowTime) <= 0)) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This event has already finished");
+        }
+        
+        if (event.getStartDate().compareTo(nowDate) > 0
+            || (event.getStartDate().compareTo(nowDate) == 0 && event.getStartTime().compareTo(nowTime) >= 0)) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This event has already began");
+        }
+
+        List<Place> eventPlaces = event.getPlaces();
+
+        if (eventPlaces.size() == 0) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "This event has no places");
+        }
+
+        Place place = null;
+
+        for (Place p : eventPlaces) {
+            if (p.getId() == placeId) {
+                place = p;
+                break;
+            }
+        }
+
+        if (place == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "This event does not have any place with the id " + placeId);
+        }
+
+        event.removePlace(place);
+        eventRepository.save(event);
     }
 
     public void delete(Long id){
@@ -127,7 +334,7 @@ public class EventService {
 
             if (entity.getEndDate().compareTo(nowDate) < 0
                 || (entity.getEndDate().compareTo(nowDate) == 0 && entity.getEndTime().compareTo(nowTime) <= 0)) {
-                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This event is already finished");
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This event has already finished");
             } else if(dto.getEndDate().compareTo(dto.getStartDate()) < 0
                 || (dto.getEndDate().compareTo(dto.getStartDate()) == 0
                     && dto.getEndTime().compareTo(dto.getStartTime()) <= 0)) {
