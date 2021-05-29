@@ -38,6 +38,16 @@ public class Ticket implements Serializable {
     @JoinColumn(name="EVENT_ID")
     private Event event;
 
+    public Ticket() {}
+
+    public Ticket(TicketType type, Instant date, double price, Attend attend, Event event) {
+        this.type = type;
+        this.date = date;
+        this.price = price;
+        this.attend = attend;
+        this.event = event;
+    }
+
     public long getId() {
         return id;
     }
