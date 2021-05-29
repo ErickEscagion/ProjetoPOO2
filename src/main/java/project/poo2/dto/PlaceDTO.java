@@ -2,18 +2,13 @@ package project.poo2.dto;
 
 import java.io.Serializable;
 
-import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 
 import project.poo2.entities.Place;
 
-
-@Entity
-@Table(name="TB_PLACE")
 public class PlaceDTO implements Serializable{
 
     @Id
