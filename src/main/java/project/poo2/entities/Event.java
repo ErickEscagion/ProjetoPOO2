@@ -157,10 +157,20 @@ public class Event implements Serializable{
 
     public void addTicket(Ticket ticket) {
         this.tickets.add(ticket);
+        if (ticket.getType() == TicketType.FREE) {
+            this.freeTicketsSelled++;
+        } else {
+            this.paidTicketsSelled++;
+        }
     }
 
     public void removeTicket(Ticket ticket) {
         this.tickets.remove(ticket);
+        if (ticket.getType() == TicketType.FREE) {
+            this.freeTicketsSelled--;
+        } else {
+            this.paidTicketsSelled--;
+        }
     }
 
     public LocalDate getStartDate() {
