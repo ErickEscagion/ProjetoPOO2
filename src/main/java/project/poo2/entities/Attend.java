@@ -60,9 +60,13 @@ public class Attend extends BaseUser {
 
     public void addTicket(Ticket ticket) {
         this.tickets.add(ticket);
+        if (ticket.getType() == TicketType.PAID)
+            this.balance -= ticket.getPrice();
     }
 
     public void removeTicket(Ticket ticket) {
         this.tickets.remove(ticket);
+        if (ticket.getType() == TicketType.PAID)
+            this.balance += ticket.getPrice();
     }
 }
