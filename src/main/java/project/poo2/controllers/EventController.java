@@ -1,6 +1,7 @@
 package project.poo2.controllers;
 
 import java.net.URI;
+import java.util.List;
 
 import javax.validation.Valid;
 
@@ -23,6 +24,10 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import project.poo2.dto.EventDTO;
 import project.poo2.dto.EventInsertDTO;
 import project.poo2.dto.EventUpdateDTO;
+import project.poo2.dto.PlaceDTO;
+import project.poo2.dto.TicketDTO;
+import project.poo2.dto.EventTicketDTO;
+import project.poo2.dto.TicketInsertDTO;
 import project.poo2.services.EventService;
 
 @RestController
@@ -43,7 +48,7 @@ public class EventController {
         @RequestParam(value = "place", defaultValue = "") String eventPlace,
         @RequestParam(value = "startDate", defaultValue = "2012-12-12") String eventStartDate
     ) {
-        PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction),orderBy);
+        PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
         Page<EventDTO> list = eventService.getEvent(pageRequest, eventName, eventDescription, eventPlace, eventStartDate);
         return ResponseEntity.ok(list);
     }
@@ -52,6 +57,42 @@ public class EventController {
     public ResponseEntity<EventDTO> getEventById(@PathVariable Long id) {
         EventDTO dto = eventService.getEventById(id);
         return ResponseEntity.ok(dto);
+    }
+
+    @GetMapping("{id}/tickets")
+    public ResponseEntity<List<EventTicketDTO>> getEventTickets(@PathVariable Long id) {
+        List<EventTicketDTO> tickets = eventService.getEventTickets(id);
+        return ResponseEntity.ok(tickets);
+    }
+
+    @PostMapping("{id}/tickets")
+    public ResponseEntity<TicketDTO> insertTicket(@PathVariable Long id, @Valid @RequestBody TicketInsertDTO ticketInsertDTO) {
+        TicketDTO dto = eventService.insertTicket(id, ticketInsertDTO);
+        return ResponseEntity.ok(dto);
+    }
+
+    @DeleteMapping("{id}/tickets")
+    public ResponseEntity<Void> removeTicket(@PathVariable Long id, @Valid @RequestBody TicketInsertDTO dto) {
+        eventService.removeTicket(id, dto);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/places")
+    public ResponseEntity<List<PlaceDTO>> getEventPlaces(@PathVariable Long id) {
+        List<PlaceDTO> places = eventService.getEventPlaces(id);
+        return ResponseEntity.ok(places);
+    }
+
+    @PostMapping("/{id}/places/{placeId}")
+    public ResponseEntity<PlaceDTO> insertPlace(@PathVariable Long id, @PathVariable Long placeId) {
+        PlaceDTO dto = eventService.insertPlace(id, placeId);
+        return ResponseEntity.ok(dto);
+    }
+
+    @DeleteMapping("{id}/places/{placeId}")
+    public ResponseEntity<Void> deletePlace(@PathVariable Long id, @PathVariable Long placeId) {
+        eventService.deletePlace(id, placeId);
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("{id}")
