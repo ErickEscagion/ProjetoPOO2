@@ -1,7 +1,6 @@
 package project.poo2.controllers;
 
 import java.net.URI;
-import java.util.List;
 
 import javax.validation.Valid;
 
@@ -60,8 +59,16 @@ public class EventController {
     }
 
     @GetMapping("{id}/tickets")
-    public ResponseEntity<List<EventTicketDTO>> getEventTickets(@PathVariable Long id) {
-        List<EventTicketDTO> tickets = eventService.getEventTickets(id);
+    public ResponseEntity<EventTicketDTO> getEventTickets(
+        @PathVariable Long id,
+        @RequestParam(value = "page", defaultValue = "0") Integer page,
+        @RequestParam(value = "linesPerPage", defaultValue = "5") Integer linesPerPage,
+        @RequestParam(value = "direction", defaultValue = "ASC") String direction,
+        @RequestParam(value = "orderBy", defaultValue = "id") String orderBy,
+        @RequestParam(value = "type", defaultValue = "") String ticketType
+    ) {
+        PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
+        EventTicketDTO tickets = eventService.getEventTickets(pageRequest, id, ticketType);
         return ResponseEntity.ok(tickets);
     }
 
@@ -71,15 +78,24 @@ public class EventController {
         return ResponseEntity.ok(dto);
     }
 
-    @DeleteMapping("{id}/tickets")
-    public ResponseEntity<Void> removeTicket(@PathVariable Long id, @Valid @RequestBody TicketInsertDTO dto) {
-        eventService.removeTicket(id, dto);
+    @DeleteMapping("{id}/tickets/{ticketId}")
+    public ResponseEntity<Void> removeTicket(@PathVariable Long id, @PathVariable Long ticketId) {
+        eventService.removeTicket(id, ticketId);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{id}/places")
-    public ResponseEntity<List<PlaceDTO>> getEventPlaces(@PathVariable Long id) {
-        List<PlaceDTO> places = eventService.getEventPlaces(id);
+    public ResponseEntity<Page<PlaceDTO>> getEventPlaces(
+        @PathVariable Long id,
+        @RequestParam(value = "page", defaultValue = "0") Integer page,
+        @RequestParam(value = "linesPerPage", defaultValue = "5") Integer linesPerPage,
+        @RequestParam(value = "direction", defaultValue = "ASC") String direction,
+        @RequestParam(value = "orderBy", defaultValue = "id") String orderBy,
+        @RequestParam(value = "name", defaultValue = "") String placeName,
+        @RequestParam(value = "address", defaultValue = "") String placeAddress
+    ) {
+        PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
+        Page<PlaceDTO> places = eventService.getEventPlaces(pageRequest, id, placeName, placeAddress);
         return ResponseEntity.ok(places);
     }
 
