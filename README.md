@@ -144,12 +144,20 @@ DELETE: /events/{id}
 #### EVENT Tickets
 ##### Rotas
 ```
-GET | POST | DELETE: /events/{id}/tickets
+GET:
+ Endpoint: /events/{id}/tickets
+ Optional Params:
+  page (int),
+  linesPerPage (int),
+  direction (String),
+  orderBy (String),
+  type (String) - "free" or "paid"
+
+POST: /events/{id}/tickets
+DELETE: /events/{id}/tickets/{ticketId}
 ```
 
-##### JSON (POST and DELETE)
-
-> DELETE JSON is needed since no ticketId is present in the route/endpoint
+##### JSON
  
 > 'type' must be 0 (FREE) or 1 (PAID)
  
@@ -163,7 +171,16 @@ GET | POST | DELETE: /events/{id}/tickets
 #### EVENT Places
 ##### Rotas
 ```
-GET: /events/{id}/places
+GET:
+ Endpoint: /events/{id}/places
+ Optional Params:
+  page (int),
+  linesPerPage (int),
+  direction (String),
+  orderBy (String),
+  name (String),
+  address (String)
+
 POST | DELETE: /events/{id}/places/{placeId}
 ```
 
