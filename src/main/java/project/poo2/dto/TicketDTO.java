@@ -39,6 +39,15 @@ public class TicketDTO implements Serializable {
 
     public TicketDTO() {}
 
+    public TicketDTO(Ticket ticket) {
+        this.id = ticket.getId();
+        this.type = ticket.getType();
+        this.date = ticket.getDate();
+        this.price = ticket.getPrice();
+        this.attend = new AttendDTO(ticket.getAttend());
+        this.event = new EventDTO(ticket.getEvent());
+    }
+
     public TicketDTO(Ticket ticket, AttendDTO attend, EventDTO event) {
         this.id = ticket.getId();
         this.type = ticket.getType();
