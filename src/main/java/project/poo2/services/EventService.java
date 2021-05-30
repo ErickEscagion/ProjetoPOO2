@@ -91,20 +91,22 @@ public class EventService {
         return new EventDTO(event);
     }
 
-    public List<EventTicketDTO> getEventTickets(Long id) {
+    public EventTicketDTO getEventTickets(PageRequest pageRequest, Long id, String ticketType) {
         Optional<Event> op = eventRepository.findById(id);
         Event event = op.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"));
 
-        List<Ticket> tickets = event.getTickets();
-        List<EventTicketDTO> ticketDtos = new ArrayList<EventTicketDTO>();
+        TicketType type = null;
 
-        for (Ticket ticket : tickets) {
-            EventTicketDTO dto = new EventTicketDTO(ticket, event);
-            dto.setAttendDTO(new AttendDTO(ticket.getAttend()));
-            ticketDtos.add(dto);
+        if (ticketType.equalsIgnoreCase("free") || ticketType.equalsIgnoreCase("paid")) {
+            type = TicketType.valueOf(ticketType.toUpperCase());
+        } else if (ticketType != null && ticketType.length() > 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Type must be 'free' or 'paid'");
         }
 
-        return ticketDtos;
+        Page<Ticket> tickets = ticketRepository.findAllByEventId(pageRequest, id, type);
+        Page<TicketDTO> pageResult = tickets.map(t -> new TicketDTO(t));
+
+        return new EventTicketDTO(pageResult, event);
     }
 
     public TicketDTO insertTicket(Long id, TicketInsertDTO insertDTO) {
@@ -119,10 +121,21 @@ public class EventService {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This event has already finished");
         }
 
+        if (event.getStartDate().compareTo(nowDate) < 0
+            || (event.getStartDate().compareTo(nowDate) == 0 && event.getStartTime().compareTo(nowTime) <= 0)) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This event has already began");
+        }
+
         Optional<Attend> opAttend = attendRepository.findById(insertDTO.getAttendId());
         Attend attend = opAttend.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Attend not found"));
 
-        Ticket ticket = new Ticket(insertDTO.getType(), Instant.now(), event.getPriceTicket(), attend, event);
+        Ticket ticket = new Ticket(
+            insertDTO.getType(),
+            Instant.now(),
+            insertDTO.getType() == TicketType.FREE ? 0 : event.getPriceTicket(),
+            attend,
+            event
+        );
 
         if (ticket.getType() == TicketType.FREE && event.getAmountFreeTickets() - event.getFreeTicketsSelled() == 0) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This event has no more free tickets");
@@ -144,13 +157,9 @@ public class EventService {
         return new TicketDTO(newTicket, new AttendDTO(attend), new EventDTO(event));
     }
 
-    public void removeTicket(Long id, TicketInsertDTO deleteDTO) {
+    public void removeTicket(long id, long ticketId) {
         Optional<Event> op = eventRepository.findById(id);
         Event event = op.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"));
-
-        if (event.getTickets().size() == 0) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "This event has no tickets");
-        }
 
         LocalDate nowDate = LocalDate.now();
         LocalTime nowTime = LocalTime.now();
@@ -160,44 +169,43 @@ public class EventService {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This event has already finished");
         }
         
-        if (event.getStartDate().compareTo(nowDate) > 0
-            || (event.getStartDate().compareTo(nowDate) == 0 && event.getStartTime().compareTo(nowTime) >= 0)) {
+        if (event.getStartDate().compareTo(nowDate) < 0
+            || (event.getStartDate().compareTo(nowDate) == 0 && event.getStartTime().compareTo(nowTime) <= 0)) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This event has already began");
         }
 
-        Optional<Attend> opAttend = attendRepository.findById(deleteDTO.getAttendId());
-        Attend attend = opAttend.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Attend not found"));
-
-        Ticket ticket;
-
-        List<Ticket> tickets = attend.getTickets().stream().filter(t -> t.getEvent().getId() == event.getId()).collect(Collectors.toList());
+        List<Ticket> tickets = event.getTickets();
 
         if (tickets.size() == 0) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "This attend has no tickets of this event");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "This event has no tickets");
         }
 
-        List<Ticket> ticketsByType = tickets.stream().filter(t -> t.getType() == deleteDTO.getType()).collect(Collectors.toList());
-        if (ticketsByType.size() > 0) {
-            ticket = ticketsByType.get(0);
-        } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "This attend has no tickets of the type " + deleteDTO.getType());
+        List<Ticket> filteredTickets = tickets.stream().filter(t -> t.getId() == ticketId).collect(Collectors.toList());
+
+        if (filteredTickets.size() == 0) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket not found");
         }
+
+        Ticket ticket = filteredTickets.get(0);
+
+        Optional<Attend> opAttend = attendRepository.findById(ticket.getAttend().getId());
+        Attend attend = opAttend.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Attend not found"));
 
         event.removeTicket(ticket);
         attend.removeTicket(ticket);
 
         eventRepository.save(event);
         attendRepository.save(attend);
-        ticketRepository.deleteById(ticket.getId());
+        ticketRepository.deleteById(ticketId);
     }
 
-    public List<PlaceDTO> getEventPlaces(long id) {
+    public Page<PlaceDTO> getEventPlaces(PageRequest pageRequest, long id, String placeName, String placeAddress) {
         Optional<Event> op = eventRepository.findById(id);
         Event event = op.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"));
 
-        List<Place> places = event.getPlaces();
+        Page<Place> places = placeRepository.findAllByEventId(pageRequest, event.getId(), placeName, placeAddress);
 
-        return places.stream().map(p -> new PlaceDTO(p)).collect(Collectors.toList());
+        return places.map(p -> new PlaceDTO(p));
     }
 
     public PlaceDTO insertPlace(long id, long placeId) {
@@ -212,8 +220,8 @@ public class EventService {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This event has already finished");
         }
         
-        if (event.getStartDate().compareTo(nowDate) > 0
-            || (event.getStartDate().compareTo(nowDate) == 0 && event.getStartTime().compareTo(nowTime) >= 0)) {
+        if (event.getStartDate().compareTo(nowDate) < 0
+            || (event.getStartDate().compareTo(nowDate) == 0 && event.getStartTime().compareTo(nowTime) <= 0)) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This event has already began");
         }
 
@@ -254,8 +262,8 @@ public class EventService {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This event has already finished");
         }
         
-        if (event.getStartDate().compareTo(nowDate) > 0
-            || (event.getStartDate().compareTo(nowDate) == 0 && event.getStartTime().compareTo(nowTime) >= 0)) {
+        if (event.getStartDate().compareTo(nowDate) < 0
+            || (event.getStartDate().compareTo(nowDate) == 0 && event.getStartTime().compareTo(nowTime) <= 0)) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This event has already began");
         }
 
@@ -263,6 +271,8 @@ public class EventService {
 
         if (eventPlaces.size() == 0) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "This event has no places");
+        } else if (eventPlaces.size() == 1) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "An event must have at least one place");
         }
 
         Place place = null;
