@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import project.poo2.entities.Admin;
+import project.poo2.entities.BaseUser;
 
 @Repository
 public interface AdminRepository extends JpaRepository <Admin,Long>{
@@ -17,4 +18,8 @@ public interface AdminRepository extends JpaRepository <Admin,Long>{
     "(LOWER(a.phoneNumber) LIKE  LOWER(CONCAT('%', :adminPhoneNumber,   '%'))) "
     )
     public Page <Admin> findAll(Pageable pageRequest, String adminName, String adminEmail, String adminPhoneNumber);
+
+    @Query("SELECT u FROM BaseUser u " +
+    "WHERE LOWER(u.email) = LOWER(:email)")
+    public BaseUser findByEmail(String email);
 }
