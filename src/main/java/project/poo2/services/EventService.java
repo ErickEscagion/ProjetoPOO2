@@ -307,7 +307,15 @@ public class EventService {
         }
     }
 
-    public EventDTO insert(@Valid EventInsertDTO dto){
+    public EventDTO insert(@Valid EventInsertDTO dto) {
+        LocalDate nowDate = LocalDate.now();
+        LocalTime nowTime = LocalTime.now();
+
+        if (dto.getStartDate().compareTo(nowDate) < 0
+            || dto.getStartDate().compareTo(nowDate) == 0 && dto.getStartTime().compareTo(nowTime) <= 0) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "An event start date must be in the feature");
+        }
+
         Optional<Admin> op = adminRepository.findById(dto.getAdminId());
         Admin admin = op.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Admin not found"));
 
