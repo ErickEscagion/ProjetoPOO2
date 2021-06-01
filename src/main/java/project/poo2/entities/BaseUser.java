@@ -2,6 +2,7 @@ package project.poo2.entities;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -27,6 +28,7 @@ public class BaseUser implements Serializable {
 
     @NotBlank(message = "Email is mandatory!")
     @Email
+    @Column(unique = true)
     private String email;
 
     public BaseUser(){
