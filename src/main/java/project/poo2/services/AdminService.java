@@ -15,6 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import project.poo2.dto.AdminDTO;
 import project.poo2.entities.Admin;
+import project.poo2.entities.BaseUser;
 import project.poo2.repositories.AdminRepository;
 
 @Service
@@ -50,21 +51,34 @@ public class AdminService {
     }
 
     public AdminDTO insert(@Valid AdminDTO dto){
+        BaseUser user = adminRepository.findByEmail(dto.getEmail());
+
+        if (user != null) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "This e-mail already exists");
+        }
+
         Admin entity = new Admin(dto);
         entity = adminRepository.save(entity);
         return new AdminDTO(entity);
     }
 
-    public AdminDTO update(Long id,@Valid AdminDTO dto){
-        try{
+    public AdminDTO update(Long id, @Valid AdminDTO dto){
+        try {
             Admin entity = adminRepository.getOne(id);
+            
+            BaseUser user = adminRepository.findByEmail(dto.getEmail());
+    
+            if (user != null && user.getEmail() != entity.getEmail()) {
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "This e-mail already exists");
+            }
+
             entity.setPhoneNumber(dto.getPhoneNumber());
             entity.setEmail(dto.getEmail());
             entity.setName(dto.getName());
             entity = adminRepository.save(entity);
             return new AdminDTO(entity);
         }
-        catch(EntityNotFoundException ex){
+        catch (EntityNotFoundException ex) {
           throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Admin not found");
         }   
     }
