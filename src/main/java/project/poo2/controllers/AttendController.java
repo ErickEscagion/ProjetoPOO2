@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import project.poo2.dto.AttendDTO;
+import project.poo2.dto.AttendUpdateDTO;
 import project.poo2.services.AttendService;
 
 @RestController
@@ -61,7 +62,7 @@ public class AttendController {
     }
 
     @PutMapping("{id}")
-	public ResponseEntity<AttendDTO> update(@Valid @PathVariable Long id, @Valid @RequestBody AttendDTO attendDTO){
+	public ResponseEntity<AttendDTO> update(@Valid @PathVariable Long id, @Valid @RequestBody AttendUpdateDTO attendDTO){
 		AttendDTO dto = attendService.update(id, attendDTO); 
 		return ResponseEntity.ok().body(dto);
 	}
