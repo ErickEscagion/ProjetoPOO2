@@ -87,6 +87,7 @@ public class PlaceService {
         LocalTime endTime = event.getEndTime();
 
         for (Event e : events) {
+            if (e.getId() == event.getId()) return true;
             if(compareDate(e.getStartDate(), endDate) == 0 && compareDate(e.getEndDate(), startDate) == 0) {
                 if ((compareTime(e.getStartTime(), startTime) >= 0 && compareTime(e.getStartTime(), endTime) < 0)
                 || (compareTime(e.getEndTime(), endTime) <= 0 && compareTime(e.getEndTime(), startTime) > 0)
