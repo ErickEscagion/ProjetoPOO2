@@ -360,6 +360,11 @@ public class EventService {
             } else {
                 List<Place> places = entity.getPlaces();
 
+                entity.setStartDate(dto.getStartDate());
+                entity.setEndDate(dto.getEndDate());
+                entity.setStartTime(dto.getStartTime());
+                entity.setEndTime(dto.getEndTime());
+
                 for (Place place : places) {
                     if (!placeService.isAvailable(place, entity)) {
                         throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The place " + place.getName() + " is not available at this time");
@@ -369,10 +374,6 @@ public class EventService {
                 entity.setName(dto.getName());
                 entity.setDescription(dto.getDescription());
                 entity.setEmailContact(dto.getEmailContact());
-                entity.setStartDate(dto.getStartDate());
-                entity.setEndDate(dto.getEndDate());
-                entity.setStartTime(dto.getStartTime());
-                entity.setEndTime(dto.getEndTime());
                 entity = eventRepository.save(entity);
                 return new EventDTO(entity);
             }

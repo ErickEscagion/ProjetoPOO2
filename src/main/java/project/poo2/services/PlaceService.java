@@ -2,6 +2,7 @@ package project.poo2.services;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -86,9 +87,12 @@ public class PlaceService {
         LocalTime startTime = event.getStartTime();
         LocalTime endTime = event.getEndTime();
 
+        List<Boolean> results = new ArrayList<>();
+
         for (Event e : events) {
-            if (e.getId() == event.getId()) return true;
-            if(compareDate(e.getStartDate(), endDate) == 0 && compareDate(e.getEndDate(), startDate) == 0) {
+            if (e.getId() == event.getId()) {
+                results.add(true);
+            } else if(compareDate(e.getStartDate(), endDate) == 0 && compareDate(e.getEndDate(), startDate) == 0) {
                 if ((compareTime(e.getStartTime(), startTime) >= 0 && compareTime(e.getStartTime(), endTime) < 0)
                 || (compareTime(e.getEndTime(), endTime) <= 0 && compareTime(e.getEndTime(), startTime) > 0)
                 || (compareTime(e.getStartTime(), startTime) < 0 && compareTime(e.getEndTime(), endTime) > 0)) {
@@ -100,20 +104,20 @@ public class PlaceService {
                 if (compareTime(e.getStartTime(), endTime) < 0) {
                     return false;
                 }
-                return true;
+                results.add(true);
             } else if (compareDate(e.getEndDate(), startDate) == 0 && compareDate(e.getStartDate(), startDate) <= 0) {
                 if (compareTime(e.getEndTime(), startTime) > 0) {
                     return false;
                 }
-                return true;
+                results.add(true);
             } else if ((compareDate(e.getStartDate(), startDate) >= 0 && compareDate(e.getStartDate(), endDate) < 0)
                 || (compareDate(e.getEndDate(), endDate) <= 0 && compareDate(e.getEndDate(), startDate) > 0)
                 || (compareDate(e.getStartDate(), startDate) < 0 && compareDate(e.getEndDate(), endDate) > 0)) {
                 return false;
             }
         }
-
-        return true;
+        
+        return !results.contains(false);
     }
 
     private int compareDate(LocalDate first, LocalDate second) {
